@@ -1,5 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
-import { Gender, LanguageLevel } from 'src/enum';
+import { Gender } from 'src/enum';
 import {
   Column,
   CreateDateColumn,
@@ -64,9 +64,6 @@ export class UserDetail {
 
   @Column({ type: 'text', nullable: true })
   resumePath: string;
-
-  @Column({ type: 'enum', enum: LanguageLevel, default: LanguageLevel.NONE })
-  englishLevel: string;
 
   @CreateDateColumn()
   createdAt: Date;

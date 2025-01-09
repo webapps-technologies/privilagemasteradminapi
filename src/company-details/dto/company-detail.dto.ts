@@ -13,7 +13,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { CompanyStatus, CompanyType } from 'src/enum';
+import { CompanyStatus } from 'src/enum';
 
 export class CompanyDetailDto {
   @IsOptional()
@@ -31,9 +31,6 @@ export class CompanyDetailDto {
   @MinLength(0)
   @MaxLength(50)
   mobileNumber: string;
-
-  @IsOptional()
-  companyType: CompanyType;
 
   @IsOptional()
   shortDesc: string;

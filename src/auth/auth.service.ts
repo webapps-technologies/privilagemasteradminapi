@@ -22,10 +22,6 @@ import { Repository } from 'typeorm';
 import {
   AdminSigninDto,
   ForgotPassDto,
-  OtpDto,
-  RecruiterRegisterDto,
-  UserLoginDto,
-  UserRegisterDto,
   VerifyOtpDto,
 } from './dto/login.dto';
 import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
@@ -67,13 +63,13 @@ export class AuthService {
     }
     const otp = 7832;
     // const otp = Math.floor(100000 + Math.random() * 9000);
-    // sendOtpInEmail(dto.email, otp);
+    // this.nodeMailerService.sendOtpInEmail(dto.email, otp);
     this.cacheManager.set(dto.email, otp, 10 * 60 * 1000);
 
     return 'OTP Sent in email!';
   }
 
-  async verifyOtp(dto: VerifyOtpDto, ip: string, origin: string,) {
+  async verifyOtp(dto: VerifyOtpDto, ip: string) {
     const admin = await this.repo
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.adminDetail', 'adminDetail')
@@ -94,7 +90,6 @@ export class AuthService {
     const obj = Object.create({
       loginId: admin.email,
       ip: ip,
-      origin: origin,
       type: LogType.LOGIN,
       accountId: admin.id,
     });
@@ -103,28 +98,62 @@ export class AuthService {
     return { token, admin: { id: admin.id, email: admin.email } };
   }
 
+  async logout(accountId: string, ip: string) {
+    const admin = await this.repo
+      .createQueryBuilder('account')
+      .where('account.id = :id', { id: accountId })
+      .getOne();
+
+    const latestLogin = await this.logRepo
+      .createQueryBuilder('loginHistory')
+      .where(
+        'loginHistory.accountId = :accountId AND loginHistory.type = :type',
+        {
+          accountId: accountId,
+          type: LogType.LOGIN,
+        },
+      )
+      .orderBy('loginHistory.createdAt', 'DESC')
+      .getOne();
+    if (latestLogin) {
+      const now = new Date();
+      var duration = Math.floor(
+        (now.getTime() - new Date(latestLogin.createdAt).getTime()) / 1000,
+      ); // in seconds
+      // latestLogin.duration = duration;
+      // await this.logRepo.save(latestLogin);
+    }
+
+    const obj = Object.create({
+      loginId: admin.email,
+      ip: ip,
+      type: LogType.LOGOUT,
+      duration: duration,
+      accountId: accountId,
+    });
+    return this.logRepo.save(obj);
+  }
+
   async resetPassword(dto: ForgotPassDto) {
     const user = await this.repo
       .createQueryBuilder('account')
       .where(
-        'account.email = :email AND account.roles = :roles AND account.status = :status',
+        'account.email = :email AND account.roles = :roles',
         {
           email: dto.email,
-          roles: UserRole.USER,
-          status: DefaultStatus.ACTIVE,
+          roles: UserRole.ADMIN,
         },
       )
       .getOne();
     if (!user) {
       throw new NotFoundException(
-        'Email does not exist. Please register first!',
+        'Email does not exist!',
       );
     }
     const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
     user.password = hashedPassword;
 
     await this.repo.save(user);
-    await this.cacheManager.del(dto.email);
 
     return { message: 'Password reset successfully' };
   }

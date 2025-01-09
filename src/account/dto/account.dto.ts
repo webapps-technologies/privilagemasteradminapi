@@ -12,7 +12,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { CandidateSelection, DefaultStatus, EducationLevel, ExperienceLevel, UserRole } from 'src/enum';
+import { DefaultStatus, UserRole } from 'src/enum';
 
 export class CreateAccountDto {
   @IsNotEmpty()
@@ -125,9 +125,6 @@ export class SearchUserPaginationDto {
   status: DefaultStatus;
 
   @IsOptional()
-  experienceLevel: ExperienceLevel;
-
-  @IsOptional()
   city: string; //current city
 
   @IsOptional()
@@ -141,10 +138,4 @@ export class SearchUserPaginationDto {
   
   @IsOptional()
   maxSalary: string;
-
-  @IsOptional()
-  educationLevel: EducationLevel;
-
-  @IsOptional()
-  selectionStatus: CandidateSelection;
 }

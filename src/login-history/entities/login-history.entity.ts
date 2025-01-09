@@ -28,6 +28,9 @@ export class LoginHistory {
   @Column({ type: 'enum', enum: LogType, default: LogType.LOGIN })
   type: LogType;
 
+  @Column({ type: 'int', nullable: true }) // in seconds
+  duration: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

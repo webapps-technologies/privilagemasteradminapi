@@ -137,138 +137,19 @@ export enum ADType {
   NONE = '',
 }
 
-export enum BannerType {
-  TOP = 'TOP',
-  MIDDLE = 'MIDDLE',
-  BOTTOM = 'BOTTOM',
-}
-
-export enum ProductFileType {
-  IMAGE = 'IMAGE',
-  VIDEO = 'VIDEO',
-}
-
-export enum CategoryType {
-  NORMAL = 'NORMAL',
-  NEW = 'NEW',
-  TRENDING = 'TRENDING',
-}
-
-export enum LeedStatus {
-  NEW = 'NEW',
-  CALLED = 'CALLED',
-}
-
-export enum JobLocation {
-  CURR_LOCATION = 'CURRENT LOCATION',
-  PREFFERED_LOCATION = 'PREFFERED LOCATION',
-}
-
-export enum EducationLevel {
-  TENTH_OR_BELOW_10TH = '10TH OR BELOW 10TH',
-  TWOELVETH = 'TWOELVETH',
-  DIPLOMA = 'DIPLOMA',
-  ITI = 'ITI',
-  GRADUATE = 'GRADUATE',
-  POST_GRADUATE = 'POST GRADUATE',
-}
-
-export enum LanguageLevel {
-  NONE = 'NONE',
-  BASIC = 'BASIC',
-  INTERMEDIATE = 'INTERMEDIATE',
-  ADVANCE = 'ADVANCE',
-}
-
-export enum SchoolMedium {
-  ENGLISH = 'English',
-  HINDI = 'Hindi',
-  BENGALI = 'Bengali',
-  ASSAMESE = 'Assamese',
-  GUJARATI = 'Gujarati',
-  KANNADA = 'Kannada',
-  KASHMIRI = 'Kashmiri',
-  KONKANI = 'Konkani',
-  MALAYALAM = 'Malayalam',
-  MANIPURI = 'Manipuri',
-  MARATHI = 'Marathi',
-  ODIA = 'Odia',
-  PUNJABI = 'Punjabi',
-  TAMIL = 'Tamil',
-  TELUGU = 'Telugu',
-  URDU = 'Urdu',
-}
-
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   BOTH = 'BOTH',
 }
 
-export enum Shift {
-  DAY = 'DAY',
-  NIGHT = 'NIGHT',
+export enum BusinessStatus {
+  ACTIVE = 'ACTIVE',
+  DEACTIVE = 'DEACTIVE',
+  RENEWAL = 'RENEWAL',
+  EXPERIED = 'EXPERIED',
 }
 
-export enum WorkPlace {
-  WORK_FROM_HOME = 'WORK FROM HOME',
-  WORK_FROM_OFFICE = 'WORK FROM OFFICE',
-  FIELD_JOB = 'FIELD JOB',
-}
-
-export enum EmploymentType {
-  FULL_TIME = 'FULL TIME',
-  PART_TIME = 'PART TIME',
-  BOTH = 'BOTH',
-}
-
-export enum SalaryType {
-  FIXED = 'FIXED',
-  FIXED_WITH_INCENTIVE = 'FIXED WITH INCENTIVE',
-  INCENTIVE = 'INCENTIVE',
-}
-
-export enum ExperienceLevel {
-  BOTH = 'BOTH',
-  EXPERIENCE = 'EXPERIENCE',
-  FRESHER = 'FRESHER',
-}
-
-export enum InterviewType {
-  WALK_IN = 'WALK IN',
-  ONLINE = 'ONLINE',
-}
-
-export enum CallPreference {
-  YES_MYSELF = 'YES TO MYSELF',
-  OTHER_RECRUITER = 'OTHER RECRUITER',
-  YES_CANDIDATE = 'YES CANDIDATE CAN CONNECT THROUGH WHATSAPP',
-  NO = 'NO',
-}
-
-export enum HiringStatus {
-  NORMAL = 'NORMAL',
-  URGENT = 'URGENT',
-}
-
-export enum CompanyType {
-  PVT = 'PVT',
-  LLP = 'LLP',
-  PARTNERSHIP = 'PARTNERSHIP',
-  PROPO = 'PROPO',
-  LTD = 'LTD',
-  NGO_OR_TRUST = 'NGO/TRUST',
-  OTHERS = 'OTHERS',
-}
-
-export enum JobTitleType {
-  NEW = 'NEW',
-  NORMAL = 'NORMAL',
-}
-
-export enum CandidateSelection {
-  ALL = 'ALL',
-  PENDING = 'PENDING',
-  SHORTLISTED = 'SHORTLISTED',
-  REJECTED = 'REJECTED',
+export enum BusinessType {
+  DEMO = 'DEMO',
 }

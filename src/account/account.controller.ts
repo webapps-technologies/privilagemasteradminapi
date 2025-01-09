@@ -84,6 +84,13 @@ export class AccountController {
     return account;
   }
 
+  @Get('admin/profile')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async adminProfile(@CurrentUser() user: Account) {
+    return this.accountService.adminProfile(user.id);
+  }
+
   @Get('stafflist')
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(...Object.values(UserRole))

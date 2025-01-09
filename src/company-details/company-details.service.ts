@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { CompanyDetailDto, RatingUpdateDto } from './dto/company-detail.dto';
 import { CompanyDetail } from './entities/company-detail.entity';
 import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
-import { CompanyType } from 'src/enum';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 
 @Injectable()

@@ -6,20 +6,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  CandidateSelection,
-  CompanyType,
-  DefaultStatus,
-  EducationLevel,
-  ExperienceLevel,
-  UserRole,
-} from 'src/enum';
+import { DefaultStatus, UserRole } from 'src/enum';
 import { Brackets, Repository } from 'typeorm';
 import {
   CreateAccountDto,
   EmailUpdateDto,
-  PaginationDto,
-  SearchUserPaginationDto,
   UpdateStaffDto,
   UpdateStaffPasswordDto,
 } from './dto/account.dto';
@@ -71,6 +62,32 @@ export class AccountService {
     });
     await this.staffRepo.save(object);
     return payload;
+  }
+
+  async adminProfile(accountId: string) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.adminDetail', 'adminDetail')
+      .select([
+        'account.id',
+        'account.email',
+        'account.password',
+        'account.roles',
+        'account.status',
+        'account.createdAt',
+
+        'adminDetail.id',
+        'adminDetail.accountId',
+        'adminDetail.userName',
+        'adminDetail.phoneNumber',
+        'adminDetail.profileImage',
+      ])
+      .where('account.id = :id AND account.roles = :roles', {
+        id: accountId,
+        roles: UserRole.ADMIN,
+      })
+      .getOne();
+      return result;
   }
 
   async getStaffDetails(dto: DefaultStatusPaginationDto) {

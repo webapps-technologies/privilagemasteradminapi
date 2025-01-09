@@ -1,5 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
-import { CompanyType, DefaultStatus } from 'src/enum';
+import { DefaultStatus } from 'src/enum';
 import {
   Column,
   CreateDateColumn,
@@ -25,9 +25,6 @@ export class CompanyDetail {
 
   @Column({ type: 'varchar', length: 300, nullable: true })
   shortDesc: string;
-
-  @Column({ type: 'enum', enum: CompanyType, default: CompanyType.PVT })
-  companyType: CompanyType;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   mobileNumber: string;

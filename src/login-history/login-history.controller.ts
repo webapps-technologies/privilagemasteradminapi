@@ -23,7 +23,7 @@ export class LoginHistoryController {
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.READ, 'login_history'])
+  // @CheckPermissions([PermissionAction.READ, 'login_history'])
   findAll(@Query() query: PaginationDto, @CurrentUser() user: Account) {
     return this.loginHistoryService.findAll(query.limit, query.offset, user.id);
   }

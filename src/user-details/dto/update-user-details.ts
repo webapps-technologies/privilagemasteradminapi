@@ -8,9 +8,7 @@ import {
   IsNumber,
   Max,
   Min,
-  IsEnum,
 } from 'class-validator';
-import { EducationLevel, ExperienceLevel, LanguageLevel } from 'src/enum';
 
 export class UpdateUserDetailDto {
   @IsOptional()
@@ -64,9 +62,6 @@ export class UpdateUserDetailDto {
   
   @IsOptional()
   currSalary: string;
-
-  @IsOptional()
-  englishLevel: LanguageLevel;
 
   @IsOptional()
   accountId: string;

@@ -1,8 +1,8 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
+import { Business } from 'src/business/entities/business.entity';
 import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import {
   AIType,
-  CandidateSelection,
   DefaultStatus,
   LoginType,
   UserRole,
@@ -61,6 +61,9 @@ export class Account {
 
   @OneToMany(() => LoginHistory, (loginHistory) => loginHistory.account)
   loginHistory: LoginHistory[];
+
+  @OneToMany(() => Business, (business) => business.account)
+  business: Business[];
 
   @OneToMany(() => Notification, (notification) => notification.account)
   notification: Notification[];

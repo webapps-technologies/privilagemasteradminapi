@@ -22,6 +22,8 @@ import { NodeMailerModule } from './node-mailer/node-mailer.module';
 import { StaffDetailsModule } from './staff-details/staff-details.module';
 import { AdminDetailModule } from './admin-detail/admin-detail.module';
 import { LoginHistoryModule } from './login-history/login-history.module';
+import { BusinessModule } from './business/business.module';
+import { BusinessTypeModule } from './business-type/business-type.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { LoginHistoryModule } from './login-history/login-history.module';
     StaffDetailsModule,
     AdminDetailModule,
     LoginHistoryModule,
+    BusinessModule,
+    BusinessTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

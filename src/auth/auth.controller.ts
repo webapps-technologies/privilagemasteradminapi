@@ -1,10 +1,13 @@
-import { Body, Controller, Ip, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   AdminSigninDto,
   ForgotPassDto,
   VerifyOtpDto,
 } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Account } from 'src/account/entities/account.entity';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -16,8 +19,14 @@ export class AuthController {
   }
 
   @Post('admin/verify')
-  verifyOtp(@Body() dto: VerifyOtpDto, @Ip() ip, @Req() req) {
-    return this.authService.verifyOtp(dto, ip, req.headers.origin);
+  verifyOtp(@Body() dto: VerifyOtpDto, @Ip() ip) {
+    return this.authService.verifyOtp(dto, ip);
+  }
+
+  @Get('logout')
+  @UseGuards(AuthGuard('jwt'))
+  logout(@CurrentUser() user: Account, @Ip() ip) {
+    return this.authService.logout(user.id, ip);
   }
 
   @Post('resetPass')
