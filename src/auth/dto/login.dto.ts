@@ -45,39 +45,6 @@ export class AdminSigninDto {
   password: string;
 }
 
-export class UserLoginDto {
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
-  email: string;
-
-  @IsNotEmpty()
-  password: string;
-}
-
-export class UserRegisterDto {
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
-  email: string;
-
-  @IsNotEmpty()
-  password: string;
-
-  @IsNotEmpty()
-  @MinLength(1)
-  @MaxLength(50)
-  name: string;
-
-  @IsNotEmpty()
-  workStatus: string;
-
-  @IsNotEmpty()
-  @MinLength(10)
-  @MaxLength(10)
-  mobileNumber: string;
-}
-
 export class ForgotPassDto {
   @IsOptional()
   @MinLength(0)
@@ -97,21 +64,4 @@ export class VerifyOtpDto {
   @IsNotEmpty()
   @IsNumber()
   otp: string;
-}
-
-export class RecruiterRegisterDto {
-  @IsNotEmpty()
-  name: string;
-
-  @IsNotEmpty()
-  mobileNumber: string;
-
-  @IsNotEmpty()
-  companyName: string;
-
-  @IsNotEmpty()
-  email: string;
-  
-  @IsNotEmpty()
-  password: string;
 }

@@ -24,6 +24,9 @@ import { AdminDetailModule } from './admin-detail/admin-detail.module';
 import { LoginHistoryModule } from './login-history/login-history.module';
 import { BusinessModule } from './business/business.module';
 import { BusinessTypeModule } from './business-type/business-type.module';
+import { CityModule } from './city/city.module';
+import { StateModule } from './state/state.module';
+import { CountryModule } from './country/country.module';
 
 @Module({
   imports: [
@@ -62,6 +65,9 @@ import { BusinessTypeModule } from './business-type/business-type.module';
     LoginHistoryModule,
     BusinessModule,
     BusinessTypeModule,
+    CityModule,
+    StateModule,
+    CountryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

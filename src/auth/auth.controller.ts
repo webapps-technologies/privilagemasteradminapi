@@ -23,14 +23,14 @@ export class AuthController {
     return this.authService.verifyOtp(dto, ip);
   }
 
+  @Post('admin/resetPass')
+  resetPassword(@Body() dto: ForgotPassDto) {
+    return this.authService.resetPassword(dto);
+  }
+
   @Get('logout')
   @UseGuards(AuthGuard('jwt'))
   logout(@CurrentUser() user: Account, @Ip() ip) {
     return this.authService.logout(user.id, ip);
-  }
-
-  @Post('resetPass')
-  resetPassword(@Body() dto: ForgotPassDto) {
-    return this.authService.resetPassword(dto);
   }
 }
