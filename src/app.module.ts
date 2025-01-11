@@ -27,6 +27,8 @@ import { BusinessTypeModule } from './business-type/business-type.module';
 import { CityModule } from './city/city.module';
 import { StateModule } from './state/state.module';
 import { CountryModule } from './country/country.module';
+import { PlanModule } from './plan/plan.module';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { CountryModule } from './country/country.module';
     CityModule,
     StateModule,
     CountryModule,
+    PlanModule,
+    MembershipModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -128,4 +128,10 @@ export class BusinessPaginationDto {
   @IsNotEmpty()
   @IsEnum(BusinessStatus)
   status: BusinessStatus;
+
+  @IsOptional()
+  fromDate: string;
+
+  @IsOptional()
+  toDate: string;
 }

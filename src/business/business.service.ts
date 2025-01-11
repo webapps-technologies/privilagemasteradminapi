@@ -75,17 +75,66 @@ export class BusinessService {
 
   async findAll(dto: BusinessPaginationDto) {
     const keyword = dto.keyword || '';
+
+    const fromDate = new Date(dto.fromDate);
+    fromDate.setHours(0, 0, 0, 0);
+
+    const toDate = new Date(dto.toDate);
+    toDate.setHours(23, 59, 59, 999);
+
     const query = await this.repo
       .createQueryBuilder('business')
-      .select(['business.id'])
+      .select([
+        'business.id',
+        'business.gender',
+        'business.personName',
+        'business.personEmail',
+        'business.personPhone',
+        'business.businessId',
+        'business.businessType',
+        'business.businessName',
+        'business.gstNo',
+        'business.address1',
+        'business.address2',
+        'business.zipCode',
+        'business.city',
+        'business.state',
+        'business.country',
+        'business.signatory',
+        'business.startDate',
+        'business.renewalDate',
+        'business.amc',
+        'business.logo',
+        'business.brandLogo',
+        'business.doc1',
+        'business.doc2',
+        'business.gstCertificate',
+        'business.workOrder',
+        'business.status',
+        'business.accountId',
+        'business.createdAt',
+        'business.updatedAt',
+      ])
       .where('business.status = :status', { status: dto.status });
+    if (dto.fromDate && dto.toDate) {
+      query.andWhere(
+        'business.createdAt >= :fromDate AND business.createdAt <= :toDate',
+        {
+          fromDate: fromDate,
+          toDate: toDate,
+        },
+      );
+    }
 
     const [result, total] = await query
       .andWhere(
         new Brackets((qb) => {
-          qb.where('business.personPhone LIKE :keyword OR business.gstNo LIKE :keyword OR business.businessName LIKE :keyword', {
-            keyword: keyword
-          });
+          qb.where(
+            'business.personPhone LIKE :keyword OR business.gstNo LIKE :keyword OR business.businessName LIKE :keyword',
+            {
+              keyword: '%' + keyword + '%',
+            },
+          );
         }),
       )
       .orderBy({ 'business.createdAt': 'DESC' })

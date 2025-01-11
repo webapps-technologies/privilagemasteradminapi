@@ -1,12 +1,21 @@
 import { Account } from 'src/account/entities/account.entity';
-import { BusinessStatus, Gender } from 'src/enum';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BusinessStatus, Gender, YNStatus } from 'src/enum';
+import { Plan } from 'src/plan/entities/plan.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Business {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  
+
   @Column({ type: 'varchar', length: 100, nullable: true })
   personName: string;
 
@@ -52,10 +61,10 @@ export class Business {
   @Column({ type: 'varchar', length: 100, nullable: true })
   signatory: string;
 
-  @Column({type: 'date', nullable: true})
+  @Column({ type: 'date', nullable: true })
   startDate: Date;
 
-  @Column({type: 'date', nullable: true})
+  @Column({ type: 'date', nullable: true })
   renewalDate: Date;
 
   @Column({ type: 'text', nullable: true })
@@ -94,6 +103,9 @@ export class Business {
   @Column({ type: 'text', nullable: true })
   workOrderPath: string;
 
+  @Column({ type: 'enum', enum: YNStatus, default: YNStatus.NO })
+  amc: YNStatus;
+
   @Column({
     type: 'enum',
     enum: BusinessStatus,
@@ -116,4 +128,7 @@ export class Business {
     onUpdate: 'CASCADE',
   })
   account: Account[];
+
+  @OneToMany(() => Plan, (plan) => plan.business)
+  plan: Plan[];
 }

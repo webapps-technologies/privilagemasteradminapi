@@ -153,3 +153,8 @@ export enum BusinessStatus {
 export enum BusinessType {
   DEMO = 'DEMO',
 }
+
+export enum PlanType {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
