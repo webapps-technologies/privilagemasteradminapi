@@ -29,6 +29,7 @@ import { StateModule } from './state/state.module';
 import { CountryModule } from './country/country.module';
 import { PlanModule } from './plan/plan.module';
 import { MembershipModule } from './membership/membership.module';
+import { LicenceModule } from './licence/licence.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { MembershipModule } from './membership/membership.module';
     CountryModule,
     PlanModule,
     MembershipModule,
+    LicenceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
