@@ -1,10 +1,12 @@
 import { Business } from 'src/business/entities/business.entity';
 import { DefaultStatus, PlanType } from 'src/enum';
+import { LicencePlan } from 'src/licence-plan/entities/licence-plan.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -59,4 +61,7 @@ export class Plan {
     onUpdate: 'CASCADE',
   })
   business: Business[];
+
+  @OneToMany(() => LicencePlan, (licencePlan) => licencePlan.plan)
+  licencePlan: LicencePlan[];
 }

@@ -30,6 +30,7 @@ import { CountryModule } from './country/country.module';
 import { PlanModule } from './plan/plan.module';
 import { MembershipModule } from './membership/membership.module';
 import { LicenceModule } from './licence/licence.module';
+import { LicencePlanModule } from './licence-plan/licence-plan.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { LicenceModule } from './licence/licence.module';
     PlanModule,
     MembershipModule,
     LicenceModule,
+    LicencePlanModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -73,9 +73,9 @@ export class BusinessController {
     const date = new Date().getDate();
     const month = new Date().getMonth() + 1;
     const fourDigitNumb = Math.floor(1000 + Math.random() * 9000);
-    const businessId = `PRI${date}${month}${fourDigitNumb}`;
+    const businessKey = `PRI${date}${month}${fourDigitNumb}`;
 
-    dto.businessId = businessId;
+    dto.businessKey = businessKey;
     dto.accountId = user.id;
     return this.businessService.create(dto);
   }

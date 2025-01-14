@@ -30,7 +30,7 @@ export class Business {
   personPhone: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  businessId: string;
+  businessKey: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   businessType: string;

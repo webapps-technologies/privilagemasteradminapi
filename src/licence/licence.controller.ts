@@ -1,30 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { LicenceService } from './licence.service';
 import { CreateLicenceDto } from './dto/create-licence.dto';
 import { UpdateLicenceDto } from './dto/update-licence.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserRole } from 'src/enum';
 
 @Controller('licence')
 export class LicenceController {
   constructor(private readonly licenceService: LicenceService) {}
 
   @Post()
-  create(@Body() createLicenceDto: CreateLicenceDto) {
-    return this.licenceService.create(createLicenceDto);
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  create(@Body() dto: CreateLicenceDto) {
+    return this.licenceService.create(dto);
   }
 
-  @Get()
+  @Get('list')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
   findAll() {
     return this.licenceService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.licenceService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLicenceDto: UpdateLicenceDto) {
-    return this.licenceService.update(+id, updateLicenceDto);
+  @Patch('renewal/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  renewal(@Param('id') id: string, @Body() dto: UpdateLicenceDto) {
+    return this.licenceService.renewal(id, dto);
   }
 
   @Delete(':id')

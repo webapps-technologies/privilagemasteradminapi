@@ -34,7 +34,7 @@ export class CreateBusinessDto {
   personPhone: string;
 
   @IsOptional()
-  businessId: string;
+  businessKey: string;
 
   @IsNotEmpty()
   businessType: string;
