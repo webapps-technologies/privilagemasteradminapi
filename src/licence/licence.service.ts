@@ -3,15 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateLicenceDto } from './dto/create-licence.dto';
+import {
+  CreateLicenceDto,
+  LicencePaginationDto,
+} from './dto/create-licence.dto';
 import { UpdateLicenceDto } from './dto/update-licence.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Licence } from './entities/licence.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { LicencePlan } from 'src/licence-plan/entities/licence-plan.entity';
 import { DefaultStatus } from 'src/enum';
 import { Business } from 'src/business/entities/business.entity';
 import { Plan } from 'src/plan/entities/plan.entity';
+import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 
 @Injectable()
 export class LicenceService {
@@ -84,29 +88,157 @@ export class LicenceService {
     return licence;
   }
 
-  async findAll() {
-    const result = await this.repo
+  async findAll(dto: LicencePaginationDto) {
+    const keyword = dto.keyword || '';
+
+    const fromDate = new Date(dto.fromDate);
+    fromDate.setHours(0, 0, 0, 0);
+    const toDate = new Date(dto.toDate);
+    toDate.setHours(23, 59, 59, 999);
+
+    const query = await this.repo
       .createQueryBuilder('licence')
+      .leftJoinAndSelect('licence.business', 'business')
       .leftJoinAndSelect('licence.licencePlan', 'licencePlan')
       .leftJoinAndSelect('licencePlan.plan', 'plan')
       .select([
-        'licence.id', 'licencePlan.id', 'plan.id'
-      ])
-      .orderBy({ 'licence.createdAt': 'DESC' })
-      .getManyAndCount()
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.createdAt',
+        'licence.status',
 
-      return result;
+        'business.id',
+        'business.businessName',
+
+        'licencePlan.id',
+        'plan.id',
+        'plan.packageName',
+        'plan.duration',
+        'plan.price',
+        'plan.mrp',
+        'plan.membership',
+        'plan.amcPrice',
+        'plan.status',
+        'plan.createdAt',
+      ])
+      .where('licence.status = :status', { status: dto.status });
+    if (dto.fromDate && dto.toDate) {
+      query.andWhere(
+        'licence.createdAt >= :fromDate AND licence.createdAt <= :toDate',
+        {
+          fromDate: fromDate,
+          toDate: toDate,
+        },
+      );
+    }
+    if (dto.keyword && dto.keyword.length > 0) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where('business.businessName LIKE :keyword', {
+            keyword: '%' + keyword + '%',
+          });
+        }),
+      );
+    }
+
+    const [result, total] = await query
+      .orderBy({ 'licence.createdAt': 'DESC' })
+      .getManyAndCount();
+
+    return { result, total };
   }
 
-  async renewal(id: string, dto: UpdateLicenceDto) {
+  async findLicenece(businessId: string) {
+    const result = await this.repo
+      .createQueryBuilder('licence')
+      .leftJoinAndSelect('licence.business', 'business')
+      .leftJoinAndSelect('licence.licencePlan', 'licencePlan')
+      .leftJoinAndSelect('licencePlan.plan', 'plan')
+      .select([
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.createdAt',
+        'licence.status',
+
+        'business.id',
+        'business.businessName',
+
+        'licencePlan.id',
+        'plan.id',
+        'plan.packageName',
+        'plan.duration',
+        'plan.price',
+        'plan.mrp',
+        'plan.membership',
+        'plan.amcPrice',
+        'plan.status',
+        'plan.createdAt',
+      ])
+      .where('licence.businessId = :businessId', { businessId: businessId })
+      .getOne();
+
+    return result;
+  }
+
+  async renewal(id: string, planId: string) {
     const result = await this.repo.findOne({ where: { id } });
     if (!result) {
       throw new NotFoundException('Licence Not Found!!');
     }
+    const plan = await this.planRepo.findOne({ where: { id: planId } });
+    if (!plan) {
+      throw new NotFoundException('Plan Not Found with this planId!');
+    }
+    const findPlan = await this.licencePlanRepo.find({
+      where: { licenceId: id },
+    });
+    await this.licencePlanRepo.remove(findPlan);
+
+    const today = new Date();
+    const startDate = new Date().toLocaleDateString('en-CA');
+    const duration = parseInt(plan.duration);
+    const renewalDate = new Date(today);
+    renewalDate.setDate(today.getDate() + duration - 1);
+    const renewalDateString = renewalDate.toLocaleDateString('en-CA');
+
+    const obj = Object.assign(result, {
+      startDate: startDate,
+      renewalDate: renewalDateString,
+    });
+    const renewed = await this.repo.save(obj);
+
+    const lpObj = Object.create({ licenceId: id, planId: planId });
+    await this.licencePlanRepo.save(lpObj);
+
+    return renewed;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} licence`;
+  async update(id: string, dto: UpdateLicenceDto) {
+    const result = await this.repo.findOne({ where: { id } });
+    if (!result) {
+      throw new NotFoundException('Licence Not Found!!');
+    }
+    const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+  async status(id: string, dto: DefaultStatusDto) {
+    const result = await this.repo.findOne({ where: { id } });
+    if (!result) {
+      throw new NotFoundException('Licence Not Found!!');
+    }
+    const obj = Object.assign(result, { status: dto.status });
+    return this.repo.save(obj);
   }
 
   private async generateLicenceKey() {

@@ -87,9 +87,11 @@ export class BusinessController {
     return this.businessService.findAll(dto);
   }
 
-  @Get(':id')
+  @Get('detail/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
   findOne(@Param('id') id: string) {
-    return this.businessService.findOne(+id);
+    return this.businessService.findOne(id);
   }
 
   @Patch('update-business/:id')

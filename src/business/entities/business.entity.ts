@@ -62,12 +62,6 @@ export class Business {
   @Column({ type: 'varchar', length: 100, nullable: true })
   signatory: string;
 
-  @Column({ type: 'date', nullable: true })
-  startDate: Date;
-
-  @Column({ type: 'date', nullable: true })
-  renewalDate: Date;
-
   @Column({ type: 'text', nullable: true })
   logo: string;
 
@@ -103,9 +97,6 @@ export class Business {
 
   @Column({ type: 'text', nullable: true })
   workOrderPath: string;
-
-  @Column({ type: 'enum', enum: YNStatus, default: YNStatus.NO })
-  amc: YNStatus;
 
   @Column({
     type: 'enum',

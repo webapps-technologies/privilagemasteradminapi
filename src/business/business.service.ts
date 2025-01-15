@@ -84,6 +84,7 @@ export class BusinessService {
 
     const query = await this.repo
       .createQueryBuilder('business')
+      .leftJoinAndSelect('business.licence', 'licence')
       .select([
         'business.id',
         'business.gender',
@@ -101,9 +102,6 @@ export class BusinessService {
         'business.state',
         'business.country',
         'business.signatory',
-        'business.startDate',
-        'business.renewalDate',
-        'business.amc',
         'business.logo',
         'business.brandLogo',
         'business.doc1',
@@ -114,6 +112,17 @@ export class BusinessService {
         'business.accountId',
         'business.createdAt',
         'business.updatedAt',
+
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.amc',
+        'licence.createdAt',
+        'licence.status',
       ])
       .where('business.status = :status', { status: dto.status });
     if (dto.fromDate && dto.toDate) {
@@ -144,8 +153,52 @@ export class BusinessService {
     return { result, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} business`;
+  async findOne(id: string) {
+    const result = await this.repo
+      .createQueryBuilder('business')
+      .leftJoinAndSelect('business.licence', 'licence')
+      .select([
+        'business.id',
+        'business.gender',
+        'business.personName',
+        'business.personEmail',
+        'business.personPhone',
+        'business.businessKey',
+        'business.businessType',
+        'business.businessName',
+        'business.gstNo',
+        'business.address1',
+        'business.address2',
+        'business.zipCode',
+        'business.city',
+        'business.state',
+        'business.country',
+        'business.signatory',
+        'business.logo',
+        'business.brandLogo',
+        'business.doc1',
+        'business.doc2',
+        'business.gstCertificate',
+        'business.workOrder',
+        'business.status',
+        'business.accountId',
+        'business.createdAt',
+        'business.updatedAt',
+
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.amc',
+        'licence.createdAt',
+        'licence.status',
+      ])
+      .where('business.id = :id', { id: id })
+      .getOne();
+    return result;
   }
 
   async findBusiness(id: string) {
@@ -214,23 +267,7 @@ export class BusinessService {
     if (!result) {
       throw new NotFoundException('Business Not Found!');
     }
-    if (dto.status == BusinessStatus.ACTIVE) {
-      const today = new Date();
-      const startDate = today.toISOString().slice(0, 10);
-
-      const nextYear = new Date(today);
-      nextYear.setFullYear(today.getFullYear() + 1);
-      nextYear.setDate(nextYear.getDate() - 1);
-      const renewalDate = nextYear.toISOString().slice(0, 10);
-      const obj = Object.assign(result, {
-        status: dto.status,
-        startDate: startDate,
-        renewalDate: renewalDate,
-      });
-      return this.repo.save(obj);
-    } else {
-      const obj = Object.assign(result, { status: dto.status });
-      return this.repo.save(obj);
-    }
+    const obj = Object.assign(result, { status: dto.status });
+    return this.repo.save(obj);
   }
 }

@@ -45,12 +45,4 @@ export class UserDetailsService {
     });
     return this.repo.save(obj);
   }
-
-  async resume(image: string, result: UserDetail) {
-    const obj = Object.assign(result, {
-      resume: process.env.PV_CDN_LINK + image,
-      resumePath: image,
-    });
-    return this.repo.save(obj);
-  }
 }

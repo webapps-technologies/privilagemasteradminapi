@@ -67,36 +67,4 @@ export class UserDetailsController {
     const fileData = await this.userDetailsService.findOne(user.id);
     return this.userDetailsService.profileImage(file.path, fileData);
   }
-  
-  @Put('resume')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/UserDetail/resume',
-        filename: (req, file, callback) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          return callback(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
-  async resume(
-    @CurrentUser() user: Account,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(pdf|docx)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const fileData = await this.userDetailsService.findOne(user.id);
-    return this.userDetailsService.resume(file.path, fileData);
-  }
 }

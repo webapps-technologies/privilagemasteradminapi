@@ -1,5 +1,5 @@
 import { Business } from 'src/business/entities/business.entity';
-import { DefaultStatus } from 'src/enum';
+import { DefaultStatus, YNStatus } from 'src/enum';
 import { LicencePlan } from 'src/licence-plan/entities/licence-plan.entity';
 import {
   Column,
@@ -33,6 +33,9 @@ export class Licence {
 
   @Column({ type: 'date', nullable: true })
   renewalDate: Date;
+
+  @Column({ type: 'enum', enum: YNStatus, default: YNStatus.YES })
+  amc: YNStatus;
 
   @CreateDateColumn()
   createdAt: Date;
