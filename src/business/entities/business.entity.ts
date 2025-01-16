@@ -1,4 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
+import { BusinessContract } from 'src/business-contract/entities/business-contract.entity';
 import { BusinessStatus, Gender, YNStatus } from 'src/enum';
 import { Licence } from 'src/licence/entities/licence.entity';
 import { Plan } from 'src/plan/entities/plan.entity';
@@ -126,4 +127,10 @@ export class Business {
 
   @OneToMany(() => Licence, (licence) => licence.business)
   licence: Licence[];
+
+  @OneToMany(
+    () => BusinessContract,
+    (businessContract) => businessContract.business,
+  )
+  businessContract: BusinessContract[];
 }

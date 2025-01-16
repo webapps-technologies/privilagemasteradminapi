@@ -32,6 +32,8 @@ import { MembershipModule } from './membership/membership.module';
 import { LicenceModule } from './licence/licence.module';
 import { LicencePlanModule } from './licence-plan/licence-plan.module';
 import { ContractTypeModule } from './contract-type/contract-type.module';
+import { ContractModule } from './contract/contract.module';
+import { BusinessContractModule } from './business-contract/business-contract.module';
 
 @Module({
   imports: [
@@ -78,6 +80,8 @@ import { ContractTypeModule } from './contract-type/contract-type.module';
     LicenceModule,
     LicencePlanModule,
     ContractTypeModule,
+    ContractModule,
+    BusinessContractModule,
   ],
   controllers: [AppController],
   providers: [AppService],

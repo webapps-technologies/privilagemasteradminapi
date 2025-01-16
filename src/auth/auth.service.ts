@@ -61,7 +61,7 @@ export class AuthService {
     if (!comparePassword) {
       throw new UnauthorizedException('password mismatched!!');
     }
-    const otp = 7832;
+    const otp = 783200;
     // const otp = Math.floor(100000 + Math.random() * 9000);
     // this.nodeMailerService.sendOtpInEmail(dto.email, otp);
     this.cacheManager.set(dto.email, otp, 10 * 60 * 1000);
