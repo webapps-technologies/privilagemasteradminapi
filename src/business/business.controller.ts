@@ -14,6 +14,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  Res,
 } from '@nestjs/common';
 import { BusinessService } from './business.service';
 import {
@@ -33,6 +34,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Account } from 'src/account/entities/account.entity';
+import { query, Response } from 'express';
+import { createpdf } from 'src/utils/createTable.utils';
 
 @Controller('business')
 export class BusinessController {
@@ -92,6 +95,34 @@ export class BusinessController {
   @Roles(UserRole.ADMIN)
   findOne(@Param('id') id: string) {
     return this.businessService.findOne(id);
+  }
+
+  @Get('admin/business-csv')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async downloadBusinessCSV(
+    @Query() dto: BusinessPaginationDto,
+    @Res() res: Response,
+  ) {
+    const csvFile = await this.businessService.downloadBusinessCSV(dto);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('business-list.csv');
+    res.send(csvFile);
+  }
+
+  @Get('business-list/pdf')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async pdf(@Res() res: Response, @Query() dto: BusinessPaginationDto) {
+    const payload = await this.businessService.pdf(dto);
+
+    const pdf = await createpdf(payload);
+    const name = Date.now().toString() + '-business-list.pdf';
+    res.setHeader('Content-Type', 'application/pdf');
+    res.set('Content-Disposition', `attachment; filename="${name}"`);
+    pdf.pipe(res);
+    pdf.end();
   }
 
   @Patch('update-business/:id')

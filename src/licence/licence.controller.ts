@@ -8,6 +8,7 @@ import {
   UseGuards,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
 import { LicenceService } from './licence.service';
 import {
@@ -20,6 +21,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { query, Response } from 'express';
 
 @Controller('licence')
 export class LicenceController {
@@ -44,6 +46,20 @@ export class LicenceController {
   @Roles(UserRole.ADMIN)
   findLicenece(@Param('businessId') businessId: string) {
     return this.licenceService.findLicenece(businessId);
+  }
+
+  @Get('admin/licence-csv')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async downloadBusinessCSV(
+    @Query() dto: LicencePaginationDto,
+    @Res() res: Response,
+  ) {
+    const csvFile = await this.licenceService.downloadLicenceCsv(dto);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('licence-list.csv');
+    res.send(csvFile);
   }
 
   @Patch('renewal/:id/:planId')

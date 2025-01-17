@@ -16,6 +16,7 @@ import { DefaultStatus } from 'src/enum';
 import { Business } from 'src/business/entities/business.entity';
 import { Plan } from 'src/plan/entities/plan.entity';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { createObjectCsvStringifier } from 'csv-writer';
 
 @Injectable()
 export class LicenceService {
@@ -188,6 +189,52 @@ export class LicenceService {
       .getOne();
 
     return result;
+  }
+
+  async downloadLicenceCsv(dto: LicencePaginationDto) {
+    const { result } = await this.findAll(dto);
+
+    const csvStringifier = createObjectCsvStringifier({
+      header: [
+        // { id: 'id', title: 'Licence ID' },
+        // { id: 'businessName', title: 'Business Name' },
+        { id: 'userLimit', title: 'User Limit' },
+        { id: 'licenceKey', title: 'Licence Key' },
+        { id: 'activationKey', title: 'Activation Key' },
+        { id: 'startDate', title: 'Start Date' },
+        { id: 'renewalDate', title: 'Renewal Date' },
+        { id: 'createdAt', title: 'Created At' },
+        { id: 'status', title: 'Status' },
+        // { id: 'packageName', title: 'Package Name' },
+        // { id: 'price', title: 'Price' },
+        // { id: 'mrp', title: 'MRP' },
+        // { id: 'membership', title: 'Membership' },
+        // { id: 'duration', title: 'Duration' },
+        // { id: 'amcPrice', title: 'AMC Price' },
+      ],
+    });
+
+    // Map the API response to the CSV format
+    const records = result.map((item) => {
+      const businessName = item.business || 'N/A';
+    
+      return {
+        // businessName,
+        userLimit: item.userLimit,
+        licenceKey: item.licenceKey,
+        activationKey: item.activationKey,
+        startDate: item.startDate,
+        renewalDate: item.renewalDate,
+        createdAt: item.createdAt,
+        status: item.status,
+      };
+    });    
+
+    // Generate CSV content
+    const csvContent =
+      csvStringifier.getHeaderString() +
+      csvStringifier.stringifyRecords(records);
+    return csvContent;
   }
 
   async renewal(id: string, planId: string) {
