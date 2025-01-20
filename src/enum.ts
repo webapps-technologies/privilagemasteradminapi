@@ -158,3 +158,17 @@ export enum PlanType {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  ALL = 'ALL',
+  REFUNDED = 'REFUNDED',
+  CANCELLED = 'CANCELLED',
+  FAILED = 'FAILED',
+}
+
+export enum PaymentType {
+  PHONE_PE = 'Phone Pe',
+  RAZOR_PAY = 'Razor Pay',
+}

@@ -22,12 +22,12 @@ export async function sendOtp(phone: number, otp: number) {
   }
 }
 
-export async function sendSMS(phone: number, message: string) {
+export async function sendSMS(phone: number, message: string, templateId: number) {
   try {
     const msg = encodeURIComponent(message);
 
     const payload = await axios.get(
-      `http://nimbusit.biz/api/SmsApi/SendSingleApi?UserID=${process.env.JOB_OTP_USERID}&Password=${process.env.JOB_OTP_PASSWORD}&SenderID=${process.env.JOB_OTP_SENDERID}&Phno=${phone}&Msg=${msg}&EntityID=${process.env.JOB_OTP_ENTITYID}&TemplateID=${process.env.JOB_OTP_TEMPLATE}`,
+      `http://nimbusit.biz/api/SmsApi/SendSingleApi?UserID=${process.env.STN_OTP_USERID}&Password=${process.env.STN_OTP_PASSWORD}&SenderID=${process.env.STN_OTP_SENDERID}&Phno=${phone}&Msg=${msg}&EntityID=${process.env.STN_OTP_ENTITYID}&TemplateID=${templateId}`,
       {
         headers: {},
       },

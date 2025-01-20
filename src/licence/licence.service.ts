@@ -237,6 +237,71 @@ export class LicenceService {
     return csvContent;
   }
 
+  async pdf(dto: LicencePaginationDto) {
+    const keyword = dto.keyword || '';
+
+    const fromDate = new Date(dto.fromDate);
+    fromDate.setHours(0, 0, 0, 0);
+    const toDate = new Date(dto.toDate);
+    toDate.setHours(23, 59, 59, 999);
+
+    const query = await this.repo
+      .createQueryBuilder('licence')
+      .leftJoinAndSelect('licence.business', 'business')
+      .leftJoinAndSelect('licence.licencePlan', 'licencePlan')
+      .leftJoinAndSelect('licencePlan.plan', 'plan')
+      .select([
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.createdAt',
+        'licence.status',
+
+        'business.id',
+        'business.businessName',
+
+        'licencePlan.id',
+        'plan.id',
+        'plan.packageName',
+        'plan.duration',
+        'plan.price',
+        'plan.mrp',
+        'plan.membership',
+        'plan.amcPrice',
+        'plan.status',
+        'plan.createdAt',
+      ])
+      .where('licence.status = :status', { status: dto.status });
+    if (dto.fromDate && dto.toDate) {
+      query.andWhere(
+        'licence.createdAt >= :fromDate AND licence.createdAt <= :toDate',
+        {
+          fromDate: fromDate,
+          toDate: toDate,
+        },
+      );
+    }
+    if (dto.keyword && dto.keyword.length > 0) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where('business.businessName LIKE :keyword', {
+            keyword: '%' + keyword + '%',
+          });
+        }),
+      );
+    }
+
+    const result = await query
+      .orderBy({ 'licence.createdAt': 'DESC' })
+      .getMany();
+
+    return result;
+  }
+
   async renewal(id: string, planId: string) {
     const result = await this.repo.findOne({ where: { id } });
     if (!result) {

@@ -22,6 +22,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 import { query, Response } from 'express';
+import { createLicencepdf } from 'src/utils/createTable.utils';
 
 @Controller('licence')
 export class LicenceController {
@@ -60,6 +61,20 @@ export class LicenceController {
     res.header('Content-Type', 'text/csv');
     res.attachment('licence-list.csv');
     res.send(csvFile);
+  }
+
+  @Get('licence-list/pdf')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async pdf(@Res() res: Response, @Query() dto: LicencePaginationDto) {
+    const payload = await this.licenceService.pdf(dto);
+
+    const pdf = await createLicencepdf(payload);
+    const name = Date.now().toString() + '-licence_list.pdf';
+    res.setHeader('Content-Type', 'application/pdf');
+    res.set('Content-Disposition', `attachment; filename="${name}"`);
+    pdf.pipe(res);
+    pdf.end();
   }
 
   @Patch('renewal/:id/:planId')

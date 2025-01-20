@@ -118,7 +118,7 @@ export class BusinessController {
     const payload = await this.businessService.pdf(dto);
 
     const pdf = await createpdf(payload);
-    const name = Date.now().toString() + '-business-list.pdf';
+    const name = Date.now().toString() + '-business_list.pdf';
     res.setHeader('Content-Type', 'application/pdf');
     res.set('Content-Disposition', `attachment; filename="${name}"`);
     pdf.pipe(res);

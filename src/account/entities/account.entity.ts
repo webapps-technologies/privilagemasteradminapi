@@ -9,6 +9,7 @@ import {
 } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
@@ -79,4 +80,7 @@ export class Account {
 
   @OneToMany(() => StaffDetail, (staffDetail) => staffDetail.account)
   staffDetail: StaffDetail[];
+
+  @OneToMany(() => PaymentHistory, (paymentHistory) => paymentHistory.account)
+  paymentHistory: PaymentHistory[];
 }

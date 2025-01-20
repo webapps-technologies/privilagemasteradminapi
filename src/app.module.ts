@@ -34,6 +34,8 @@ import { LicencePlanModule } from './licence-plan/licence-plan.module';
 import { ContractTypeModule } from './contract-type/contract-type.module';
 import { ContractModule } from './contract/contract.module';
 import { BusinessContractModule } from './business-contract/business-contract.module';
+import { PaymentHistoryModule } from './payment-history/payment-history.module';
+import { NotifyModule } from './notify/notify.module';
 
 @Module({
   imports: [
@@ -82,6 +84,8 @@ import { BusinessContractModule } from './business-contract/business-contract.mo
     ContractTypeModule,
     ContractModule,
     BusinessContractModule,
+    PaymentHistoryModule,
+    NotifyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
