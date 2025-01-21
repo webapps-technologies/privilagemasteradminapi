@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DefaultStatus } from '../../enum';
 
 @Entity()
 export class Setting {
@@ -30,21 +29,6 @@ export class Setting {
 
   @Column({type: 'text', nullable: true})
   logoPath: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  facebook: string;
- 
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  linkedIn: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  twitter: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  instagram: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  whatsApp: string;
 
   @CreateDateColumn()
   createdAt: Date;

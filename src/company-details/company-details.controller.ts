@@ -19,7 +19,7 @@ export class CompanyDetailsController {
 
   @Patch('profile-update')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.RECRUITER)
+  @Roles(UserRole.BUSINESS)
   update(@CurrentUser() user: Account, @Body() dto: CompanyDetailDto) {
     return this.companyDetailsService.update(user.id, dto);
   }

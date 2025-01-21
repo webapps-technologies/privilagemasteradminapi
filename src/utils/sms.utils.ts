@@ -27,7 +27,7 @@ export async function sendSMS(phone: number, message: string, templateId: number
     const msg = encodeURIComponent(message);
 
     const payload = await axios.get(
-      `http://nimbusit.biz/api/SmsApi/SendSingleApi?UserID=${process.env.STN_OTP_USERID}&Password=${process.env.STN_OTP_PASSWORD}&SenderID=${process.env.STN_OTP_SENDERID}&Phno=${phone}&Msg=${msg}&EntityID=${process.env.STN_OTP_ENTITYID}&TemplateID=${templateId}`,
+      `http://nimbusit.biz/api/SmsApi/SendSingleApi?UserID=${process.env.PV_OTP_USERID}&Password=${process.env.PV_OTP_PASSWORD}&SenderID=${process.env.PV_OTP_SENDERID}&Phno=${phone}&Msg=${msg}&EntityID=${process.env.PV_OTP_ENTITYID}&TemplateID=${templateId}`,
       {
         headers: {},
       },

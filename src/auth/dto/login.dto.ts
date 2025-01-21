@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -66,4 +67,16 @@ export class VerifyOtpDto {
   @IsNotEmpty()
   @IsNumber()
   otp: string;
+}
+
+export class BusinessCreateDto {
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(10)
+  phoneNumber: string;
 }

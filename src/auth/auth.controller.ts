@@ -2,12 +2,16 @@ import { Body, Controller, Get, Ip, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   AdminSigninDto,
+  BusinessCreateDto,
   ForgotPassDto,
   VerifyOtpDto,
 } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Account } from 'src/account/entities/account.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { UserRole } from 'src/enum';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guards/roles.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +30,13 @@ export class AuthController {
   @Post('admin/resetPass')
   resetPassword(@Body() dto: ForgotPassDto) {
     return this.authService.resetPassword(dto);
+  }
+
+  @Post('create-business')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  createBusiness(@Body() dto: BusinessCreateDto) {
+    return this.authService.createBusiness(dto);
   }
 
   @Get('logout')

@@ -21,6 +21,7 @@ import APIFeatures from 'src/utils/apiFeatures.utils';
 import { Repository } from 'typeorm';
 import {
   AdminSigninDto,
+  BusinessCreateDto,
   ForgotPassDto,
   VerifyOtpDto,
 } from './dto/login.dto';
@@ -98,6 +99,17 @@ export class AuthService {
     return { token, admin: { id: admin.id, email: admin.email } };
   }
 
+  async createBusiness(dto: BusinessCreateDto) {
+    const result = await this.repo.find({
+      where: { email: dto.email, phoneNumber: dto.phoneNumber },
+    });
+    if (result) {
+      throw new ConflictException('Email or Phone Number already exists!');
+    }
+    const obj = Object.assign(dto);
+    return this.repo.save(obj);
+  }
+
   async logout(accountId: string, ip: string) {
     const admin = await this.repo
       .createQueryBuilder('account')
@@ -137,18 +149,13 @@ export class AuthService {
   async resetPassword(dto: ForgotPassDto) {
     const user = await this.repo
       .createQueryBuilder('account')
-      .where(
-        'account.email = :email AND account.roles = :roles',
-        {
-          email: dto.email,
-          roles: UserRole.ADMIN,
-        },
-      )
+      .where('account.email = :email AND account.roles = :roles', {
+        email: dto.email,
+        roles: UserRole.ADMIN,
+      })
       .getOne();
     if (!user) {
-      throw new NotFoundException(
-        'Email does not exist!',
-      );
+      throw new NotFoundException('Email does not exist!');
     }
     const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
     user.password = hashedPassword;
@@ -194,9 +201,9 @@ export class AuthService {
     if (!role && role == UserRole.USER) {
       query.where('account.roles = :roles', { roles: UserRole.USER });
     }
-    if (!role && role == UserRole.RECRUITER) {
+    if (!role && role == UserRole.BUSINESS) {
       query.where('account.roles IN (:...roles)', {
-        roles: [UserRole.RECRUITER],
+        roles: [UserRole.BUSINESS],
       });
     }
     if (!role && role == UserRole.ADMIN) {
