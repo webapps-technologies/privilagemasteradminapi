@@ -8,11 +8,11 @@ export class UpdateBusinessDto {
   @IsOptional()
   personName: string;
 
-  @IsOptional()
-  personEmail: string;
+  // @IsOptional()
+  // personEmail: string;
 
-  @IsOptional()
-  personPhone: string;
+  // @IsOptional()
+  // personPhone: string;
 
   @IsOptional()
   businessType: string;

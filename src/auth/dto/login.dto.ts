@@ -79,4 +79,19 @@ export class BusinessCreateDto {
   @MinLength(10)
   @MaxLength(10)
   phoneNumber: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  password: string;
+}
+
+export class BusinessLoginDto {
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  password: string;
 }

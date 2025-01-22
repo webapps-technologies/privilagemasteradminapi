@@ -65,13 +65,15 @@ export class BusinessService {
 
   async create(dto: CreateBusinessDto) {
     const result = await this.repo.findOne({
-      where: { businessName: dto.businessName },
+      where: { accountId: dto.accountId },
     });
     if (result) {
-      throw new ConflictException('Business Already exists with this name!');
+      const obj = Object.assign(result, dto);
+      return this.repo.save(obj);
+    } else {
+      const obj = Object.assign(dto);
+      return this.repo.save(obj);
     }
-    const obj = Object.assign(dto);
-    return this.repo.save(obj);
   }
 
   async findAll(dto: BusinessPaginationDto) {
@@ -85,6 +87,7 @@ export class BusinessService {
 
     const query = await this.repo
       .createQueryBuilder('business')
+      .leftJoinAndSelect('business.account', 'account')
       .leftJoinAndSelect('business.licence', 'licence')
       .select([
         'business.id',
@@ -114,6 +117,13 @@ export class BusinessService {
         'business.createdAt',
         'business.updatedAt',
 
+        'account.id',
+        'account.phoneNumber',
+        'account.email',
+        'account.password',
+        'account.roles',
+        'account.createdAt',
+
         'licence.id',
         'licence.businessId',
         'licence.userLimit',
@@ -140,7 +150,7 @@ export class BusinessService {
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            'business.personPhone LIKE :keyword OR business.gstNo LIKE :keyword OR business.businessName LIKE :keyword',
+            'account.phoneNumber LIKE :keyword OR business.gstNo LIKE :keyword OR business.businessName LIKE :keyword',
             {
               keyword: '%' + keyword + '%',
             },
@@ -149,7 +159,7 @@ export class BusinessService {
       )
       .orderBy({ 'business.createdAt': 'DESC' })
       .take(dto.limit)
-      .offset(dto.offset)
+      .skip(dto.offset)
       .getManyAndCount();
     return { result, total };
   }
@@ -157,6 +167,7 @@ export class BusinessService {
   async findOne(id: string) {
     const result = await this.repo
       .createQueryBuilder('business')
+      .leftJoinAndSelect('business.account', 'account')
       .leftJoinAndSelect('business.licence', 'licence')
       .leftJoinAndSelect('business.businessContract', 'businessContract')
       .leftJoinAndSelect('businessContract.contract', 'contract')
@@ -188,6 +199,13 @@ export class BusinessService {
         'business.createdAt',
         'business.updatedAt',
 
+        'account.id',
+        'account.phoneNumber',
+        'account.email',
+        'account.password',
+        'account.roles',
+        'account.createdAt',
+
         'licence.id',
         'licence.businessId',
         'licence.userLimit',
@@ -213,8 +231,8 @@ export class BusinessService {
     return result;
   }
 
-  async findBusiness(id: string) {
-    return this.repo.findOne({ where: { id } });
+  async findBusiness(accountId: string) {
+    return this.repo.findOne({ where: { accountId } });
   }
 
   async downloadBusinessCSV(dto: BusinessPaginationDto): Promise<string> {
@@ -377,6 +395,15 @@ export class BusinessService {
 
   async update(id: string, dto: UpdateBusinessDto) {
     const result = await this.repo.findOne({ where: { id } });
+    if (!result) {
+      throw new NotFoundException('Business Not Found!');
+    }
+    const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+  async updateByBusiness(accountId: string, dto: UpdateBusinessDto) {
+    const result = await this.repo.findOne({ where: { accountId } });
     if (!result) {
       throw new NotFoundException('Business Not Found!');
     }

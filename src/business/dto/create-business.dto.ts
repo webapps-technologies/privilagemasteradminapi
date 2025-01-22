@@ -23,15 +23,15 @@ export class CreateBusinessDto {
   @MaxLength(100)
   personName: string;
 
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(100)
-  personEmail: string;
+  // @IsNotEmpty()
+  // @MinLength(2)
+  // @MaxLength(100)
+  // personEmail: string;
 
-  @IsNotEmpty()
-  @MinLength(10)
-  @MaxLength(10)
-  personPhone: string;
+  // @IsNotEmpty()
+  // @MinLength(10)
+  // @MaxLength(10)
+  // personPhone: string;
 
   @IsOptional()
   businessKey: string;

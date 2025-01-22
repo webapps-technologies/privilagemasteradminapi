@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import {
   AdminSigninDto,
   BusinessCreateDto,
+  BusinessLoginDto,
   ForgotPassDto,
   VerifyOtpDto,
 } from './dto/login.dto';
@@ -37,6 +38,11 @@ export class AuthController {
   @Roles(UserRole.ADMIN)
   createBusiness(@Body() dto: BusinessCreateDto) {
     return this.authService.createBusiness(dto);
+  }
+
+  @Post('business/login')
+  businessLogin(@Body() dto: BusinessLoginDto){
+    return this.authService.businessLogin(dto);
   }
 
   @Get('logout')

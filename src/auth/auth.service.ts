@@ -22,11 +22,13 @@ import { Repository } from 'typeorm';
 import {
   AdminSigninDto,
   BusinessCreateDto,
+  BusinessLoginDto,
   ForgotPassDto,
   VerifyOtpDto,
 } from './dto/login.dto';
 import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
+import { Business } from 'src/business/entities/business.entity';
 
 @Injectable()
 export class AuthService {
@@ -35,8 +37,8 @@ export class AuthService {
     @InjectRepository(Account) private readonly repo: Repository<Account>,
     @InjectRepository(UserPermission)
     private readonly upRepo: Repository<UserPermission>,
-    @InjectRepository(CompanyDetail)
-    private readonly companyDetailRepo: Repository<CompanyDetail>,
+    @InjectRepository(Business)
+    private readonly businessRepo: Repository<Business>,
     @InjectRepository(UserDetail)
     private readonly userDetailRepo: Repository<UserDetail>,
     @InjectRepository(LoginHistory)
@@ -100,14 +102,56 @@ export class AuthService {
   }
 
   async createBusiness(dto: BusinessCreateDto) {
-    const result = await this.repo.find({
-      where: { email: dto.email, phoneNumber: dto.phoneNumber },
-    });
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .where('account.email = :email OR account.phoneNumber = :phoneNumber', {
+        email: dto.email,
+        phoneNumber: dto.phoneNumber,
+      })
+      .getOne();
     if (result) {
       throw new ConflictException('Email or Phone Number already exists!');
     }
-    const obj = Object.assign(dto);
-    return this.repo.save(obj);
+    const obj = Object.assign({
+      email: dto.email,
+      phoneNumber: dto.phoneNumber,
+      password: await bcrypt.hash(dto.password, 10),
+      roles: UserRole.BUSINESS,
+    });
+    const account = await this.repo.save(obj);
+
+    const busiObj = Object.assign({
+      personEmail: dto.email,
+      personPhone: dto.phoneNumber,
+      accountId: account.id,
+    });
+    await this.businessRepo.save(busiObj);
+
+    return account;
+  }
+
+  async businessLogin(dto: BusinessLoginDto) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .where(
+        'account.email = :email AND account.roles = :roles AND account.status = :status',
+        {
+          email: dto.email,
+          roles: UserRole.BUSINESS,
+          status: DefaultStatus.ACTIVE,
+        },
+      )
+      .getOne();
+    if (!result) {
+      throw new NotFoundException('EmailId not found! Please contact admin.');
+    }
+    const comparePassword = await bcrypt.compare(dto.password, result.password);
+    if (!comparePassword) {
+      throw new UnauthorizedException('password mismatched!!');
+    }
+    const token = await APIFeatures.assignJwtToken(result.id, this.jwtService);
+
+    return { token, business: { id: result.id, email: result.email } };
   }
 
   async logout(accountId: string, ip: string) {

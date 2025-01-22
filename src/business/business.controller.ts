@@ -32,10 +32,10 @@ import { UserRole } from 'src/enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { Account } from 'src/account/entities/account.entity';
 import { query, Response } from 'express';
 import { createpdf } from 'src/utils/createTable.utils';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Account } from 'src/account/entities/account.entity';
 
 @Controller('business')
 export class BusinessController {
@@ -72,14 +72,13 @@ export class BusinessController {
   @Post('create')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
-  create(@Body() dto: CreateBusinessDto, @CurrentUser() user: Account) {
+  create(@Body() dto: CreateBusinessDto) {
     const date = new Date().getDate();
     const month = new Date().getMonth() + 1;
     const fourDigitNumb = Math.floor(1000 + Math.random() * 9000);
     const businessKey = `PRI${date}${month}${fourDigitNumb}`;
 
     dto.businessKey = businessKey;
-    dto.accountId = user.id;
     return this.businessService.create(dto);
   }
 
@@ -132,7 +131,17 @@ export class BusinessController {
     return this.businessService.update(id, dto);
   }
 
-  @Put('document1/:id')
+  @Patch('update-business/business')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  updateByBusiness(
+    @CurrentUser() user: Account,
+    @Body() dto: UpdateBusinessDto,
+  ) {
+    return this.businessService.update(user.id, dto);
+  }
+
+  @Put('document1/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -150,7 +159,7 @@ export class BusinessController {
     }),
   )
   async document1(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -161,11 +170,11 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
     return this.businessService.document1(file.path, fileData);
   }
 
-  @Put('document2/:id')
+  @Put('document2/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -183,7 +192,7 @@ export class BusinessController {
     }),
   )
   async document2(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -194,11 +203,11 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
     return this.businessService.document2(file.path, fileData);
   }
 
-  @Put('gstCertificate/:id')
+  @Put('gstCertificate/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -216,7 +225,7 @@ export class BusinessController {
     }),
   )
   async gstCertificate(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -227,11 +236,11 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
     return this.businessService.gstCertificate(file.path, fileData);
   }
 
-  @Put('workOrder/:id')
+  @Put('workOrder/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -249,7 +258,7 @@ export class BusinessController {
     }),
   )
   async workOrder(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -260,11 +269,11 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
     return this.businessService.workOrder(file.path, fileData);
   }
 
-  @Put('logo/:id')
+  @Put('logo/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -282,7 +291,7 @@ export class BusinessController {
     }),
   )
   async logo(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -293,11 +302,11 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
     return this.businessService.logo(file.path, fileData);
   }
 
-  @Put('brandLogo/:id')
+  @Put('brandLogo/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(
@@ -315,7 +324,7 @@ export class BusinessController {
     }),
   )
   async brandLogo(
-    @Param('id') id: string,
+    @Param('accountId') accountId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -326,7 +335,73 @@ export class BusinessController {
     )
     file: Express.Multer.File,
   ) {
-    const fileData = await this.businessService.findBusiness(id);
+    const fileData = await this.businessService.findBusiness(accountId);
+    return this.businessService.brandLogo(file.path, fileData);
+  }
+
+  @Put('upload-logo')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/BusinessDoc',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async businessUpdateLogo(
+    @CurrentUser() user: Account,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(jpg|jpeg|png)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.businessService.findBusiness(user.id);
+    return this.businessService.logo(file.path, fileData);
+  }
+
+  @Put('upload-brandLogo')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/BusinessDoc',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async businessUpdloadBrandLogo(
+    @CurrentUser() user: Account,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(jpg|jpeg|png)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.businessService.findBusiness(user.id);
     return this.businessService.brandLogo(file.path, fileData);
   }
 

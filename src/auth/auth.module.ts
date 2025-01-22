@@ -17,6 +17,7 @@ import { CompanyDetail } from 'src/company-details/entities/company-detail.entit
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { NodeMailerModule } from 'src/node-mailer/node-mailer.module';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
+import { Business } from 'src/business/entities/business.entity';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LoginHistory } from 'src/login-history/entities/login-history.entity';
       CompanyDetail,
       UserDetail,
       LoginHistory,
+      Business
     ]),
     NodeMailerModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
