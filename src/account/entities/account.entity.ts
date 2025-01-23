@@ -1,15 +1,11 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
 import { Business } from 'src/business/entities/business.entity';
 import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
-import {
-  AIType,
-  DefaultStatus,
-  LoginType,
-  UserRole,
-} from 'src/enum';
+import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
+import { Setting } from 'src/settings/entities/setting.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
@@ -83,4 +79,7 @@ export class Account {
 
   @OneToMany(() => PaymentHistory, (paymentHistory) => paymentHistory.account)
   paymentHistory: PaymentHistory[];
+
+  @OneToMany(() => Setting, (setting) => setting.account)
+  setting: Setting[];
 }

@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Like, Repository } from 'typeorm';
@@ -13,6 +13,19 @@ export class SettingsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
+  async create(dto: SettingDto) {
+    const result = await this.repo.findOne({
+      where: { accountId: dto.accountId },
+    });
+    if (result) {
+      throw new ConflictException(
+        'settings already exists with this accountId!',
+      );
+    }
+    const obj = Object.assign(dto);
+    return this.repo.save(obj);
+  }
+
   async find() {
     return this.repo.createQueryBuilder('setting').getOne();
   }
@@ -24,21 +37,9 @@ export class SettingsService {
     return { result, total };
   }
 
-  async findSetting() {
-    return this.repo.createQueryBuilder('setting').getOne();
-  }
-
   async update(dto: SettingDto) {
     const result = await this.repo.createQueryBuilder('setting').getOne();
     const obj = Object.assign(result, dto);
-    return this.repo.save(obj);
-  }
-
-  async logo(image: string, result: Setting) {
-    const obj = Object.assign(result, {
-      logo: process.env.PV_CDN_LINK + image,
-      logoPath: image,
-    });
     return this.repo.save(obj);
   }
 }

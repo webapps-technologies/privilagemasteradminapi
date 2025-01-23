@@ -6,6 +6,7 @@ import {
   MaxFileSizeValidator,
   ParseFilePipe,
   Patch,
+  Post,
   Put,
   UploadedFile,
   UseGuards,
@@ -27,6 +28,13 @@ export class SettingsController {
   version = new Date();
   constructor(private readonly settingsService: SettingsService) {}
 
+  @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  create(@Body() dto: SettingDto) {
+    return this.settingsService.create(dto);
+  }
+
   @Get()
   find() {
     return this.settingsService.find();
@@ -43,38 +51,5 @@ export class SettingsController {
   @CheckPermissions([PermissionAction.UPDATE, 'setting'])
   update(@Body() dto: SettingDto) {
     return this.settingsService.update(dto);
-  }
-
-  @Put('logo')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.UPDATE, 'setting'])
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads/settings',
-        filename: (req, file, callback) => {
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          return callback(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
-  async logo(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
-  ) {
-    const fileData = await this.settingsService.findSetting();
-    return this.settingsService.logo(file.path, fileData);
   }
 }

@@ -23,23 +23,6 @@ export class SettingDto {
   @MaxLength(150)
   mobile_domain: string;
 
-  @IsOptional()
-  @IsString()
-  facebook: string;
-
-  @IsOptional()
-  @IsString()
-  linkedIn: string;
-
-  @IsOptional()
-  @IsString()
-  twitter: string;
-
-  @IsOptional()
-  @IsString()
-  instagram: string;
-
-  @IsOptional()
-  @IsString()
-  whatsApp: string;
+  @IsNotEmpty()
+  accountId: string;
 }

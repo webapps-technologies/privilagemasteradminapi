@@ -1,8 +1,9 @@
+import { Account } from 'src/account/entities/account.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -24,15 +25,31 @@ export class Setting {
   @Column({ type: 'varchar', length: 150, nullable: true })
   mobile_domain: string;
 
-  @Column({type: 'text', nullable: true})
-  logo: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  dateFormat: string;
 
-  @Column({type: 'text', nullable: true})
-  logoPath: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  timeFormat: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  timeZone: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  defaultLanguage: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  accountId: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Account, (account) => account.setting, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  account: Account[];
 }
