@@ -16,12 +16,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { PermissionAction, UserRole } from 'src/enum';
-import { SettingDto } from './dto/setting.dto';
+import { SettingDto, UpdateSettingDto } from './dto/setting.dto';
 import { SettingsService } from './settings.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { CheckPermissions } from 'src/auth/decorators/permissions.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Account } from 'src/account/entities/account.entity';
 
 @Controller('settings')
 export class SettingsController {
@@ -35,9 +37,11 @@ export class SettingsController {
     return this.settingsService.create(dto);
   }
 
-  @Get()
-  find() {
-    return this.settingsService.find();
+  @Get('business-setting')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  find(@CurrentUser() user: Account) {
+    return this.settingsService.find(user.id);
   }
 
   @Get('admin')
@@ -47,9 +51,8 @@ export class SettingsController {
 
   @Patch('update')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.UPDATE, 'setting'])
-  update(@Body() dto: SettingDto) {
-    return this.settingsService.update(dto);
+  @Roles(UserRole.BUSINESS)
+  update(@Body() dto: UpdateSettingDto, @CurrentUser() user: Account) {
+    return this.settingsService.update(dto, user.id);
   }
 }

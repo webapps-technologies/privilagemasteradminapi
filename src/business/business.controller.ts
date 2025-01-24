@@ -372,6 +372,39 @@ export class BusinessController {
     return this.businessService.logo(file.path, fileData);
   }
 
+  @Put('upload-bwlogo')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/BusinessDoc',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async businessUpdatebwLogo(
+    @CurrentUser() user: Account,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(jpg|jpeg|png)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.businessService.findBusiness(user.id);
+    return this.businessService.bwLogo(file.path, fileData);
+  }
+
   @Put('upload-brandLogo')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.BUSINESS)

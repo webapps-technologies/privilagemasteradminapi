@@ -34,8 +34,8 @@ export class Setting {
   @Column({ type: 'varchar', length: 100, nullable: true })
   timeZone: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  defaultLanguage: string;
+  @Column({type: 'varchar', length: 100, nullable: true})
+  currency: string;
 
   @Column({ type: 'uuid', nullable: true })
   accountId: string;

@@ -7,6 +7,7 @@ import { Notification } from 'src/notifications/entities/notification.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
 import { Setting } from 'src/settings/entities/setting.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
+import { Tax } from 'src/tax/entities/tax.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
 import {
@@ -82,4 +83,7 @@ export class Account {
 
   @OneToMany(() => Setting, (setting) => setting.account)
   setting: Setting[];
+
+  @OneToMany(() => Tax, (tax) => tax.account)
+  tax: Tax[];
 }

@@ -22,11 +22,14 @@ import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
 import { sendOtp } from 'src/utils/sms.utils';
 import { BusinessStatus } from 'src/enum';
 import { createObjectCsvStringifier } from 'csv-writer';
+import { Setting } from 'src/settings/entities/setting.entity';
 
 @Injectable()
 export class BusinessService {
   constructor(
     @InjectRepository(Business) private readonly repo: Repository<Business>,
+    @InjectRepository(Setting)
+    private readonly settingRepo: Repository<Setting>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly nodeMailerService: NodeMailerService,
   ) {}
@@ -69,7 +72,20 @@ export class BusinessService {
     });
     if (result) {
       const obj = Object.assign(result, dto);
-      return this.repo.save(obj);
+      const business = await this.repo.save(obj);
+      const settingObj = Object.assign({
+        accountId: dto.accountId,
+        title: 'Setting',
+        user_domain: null,
+        admin_domain: null,
+        mobile_domain: null,
+        dateFormat: 'd-m-y',
+        timeFormat: '12hours',
+        timeZone: 'Asia/Kolkata',
+        currency: 'INR'
+      });
+      await this.settingRepo.save(settingObj);
+      return business;
     } else {
       const obj = Object.assign(dto);
       return this.repo.save(obj);
@@ -98,6 +114,9 @@ export class BusinessService {
         'business.businessKey',
         'business.businessType',
         'business.businessName',
+        'business.parentCompanyName',
+        'business.businessPhone',
+        'business.businessEmail',
         'business.gstNo',
         'business.address1',
         'business.address2',
@@ -107,6 +126,7 @@ export class BusinessService {
         'business.country',
         'business.signatory',
         'business.logo',
+        'business.bwLogo',
         'business.brandLogo',
         'business.doc1',
         'business.doc2',
@@ -180,6 +200,9 @@ export class BusinessService {
         'business.businessKey',
         'business.businessType',
         'business.businessName',
+        'business.parentCompanyName',
+        'business.businessPhone',
+        'business.businessEmail',
         'business.gstNo',
         'business.address1',
         'business.address2',
@@ -447,6 +470,14 @@ export class BusinessService {
     const obj = Object.assign(result, {
       logo: process.env.PV_CDN_LINK + image,
       logoPath: image,
+    });
+    return this.repo.save(obj);
+  }
+
+  async bwLogo(image: string, result: Business) {
+    const obj = Object.assign(result, {
+      bwLogo: process.env.PV_CDN_LINK + image,
+      bwLogoPath: image,
     });
     return this.repo.save(obj);
   }

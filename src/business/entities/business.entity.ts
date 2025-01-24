@@ -39,6 +39,15 @@ export class Business {
   @Column({ type: 'varchar', length: 500, nullable: true })
   businessName: string;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  parentCompanyName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  businessPhone: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  businessEmail: string;
+
   @Column({ type: 'varchar', length: 100, nullable: true })
   gstNo: string;
 
@@ -68,6 +77,12 @@ export class Business {
 
   @Column({ type: 'text', nullable: true })
   logoPath: string;
+
+  @Column({ type: 'text', nullable: true })
+  bwLogo: string;
+
+  @Column({ type: 'text', nullable: true })
+  bwLogoPath: string;
 
   @Column({ type: 'text', nullable: true })
   brandLogo: string;

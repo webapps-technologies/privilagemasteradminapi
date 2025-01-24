@@ -22,6 +22,16 @@ export class UpdateBusinessDto {
   businessName: string;
 
   @IsOptional()
+  @IsString()
+  parentCompanyName: string;
+
+  @IsOptional()
+  businessPhone: string;
+  
+  @IsOptional()
+  businessEmail: string;
+
+  @IsOptional()
   gstNo: string;
 
   @IsOptional()
