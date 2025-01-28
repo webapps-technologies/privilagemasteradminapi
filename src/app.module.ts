@@ -37,6 +37,7 @@ import { BusinessContractModule } from './business-contract/business-contract.mo
 import { PaymentHistoryModule } from './payment-history/payment-history.module';
 import { NotifyModule } from './notify/notify.module';
 import { TaxModule } from './tax/tax.module';
+import { AmenitiesModule } from './amenities/amenities.module';
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { TaxModule } from './tax/tax.module';
     PaymentHistoryModule,
     NotifyModule,
     TaxModule,
+    AmenitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
+import { Amenity } from 'src/amenities/entities/amenity.entity';
 import { Business } from 'src/business/entities/business.entity';
 import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
@@ -86,4 +87,7 @@ export class Account {
 
   @OneToMany(() => Tax, (tax) => tax.account)
   tax: Tax[];
+
+  @OneToMany(() => Amenity, (amenity) => amenity.account)
+  amenities: Amenity[];
 }

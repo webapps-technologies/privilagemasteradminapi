@@ -3,24 +3,26 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateTaxDto } from './dto/create-tax.dto';
-import { UpdateTaxDto } from './dto/update-tax.dto';
+import { CreateAmenityDto } from './dto/create-amenity.dto';
+import { UpdateAmenityDto } from './dto/update-amenity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Tax } from './entities/tax.entity';
+import { Amenity } from './entities/amenity.entity';
 import { Brackets, Repository } from 'typeorm';
 import { DefaultStatusPaginationDto } from 'src/common/dto/default-status-pagination.dto';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 
 @Injectable()
-export class TaxService {
-  constructor(@InjectRepository(Tax) private readonly repo: Repository<Tax>) {}
+export class AmenitiesService {
+  constructor(
+    @InjectRepository(Amenity) private readonly repo: Repository<Amenity>,
+  ) {}
 
-  async create(dto: CreateTaxDto, accountId: string) {
+  async create(dto: CreateAmenityDto, accountId: string) {
     const result = await this.repo.findOne({
-      where: { taxName: dto.taxName, accountId: accountId },
+      where: { name: dto.name, accountId: accountId },
     });
     if (result) {
-      throw new ConflictException('Tax Already Exists!');
+      throw new ConflictException('Amenity Already Exists!');
     }
     const obj = Object.assign(dto);
     return this.repo.save(obj);
@@ -29,26 +31,32 @@ export class TaxService {
   async findAll(dto: DefaultStatusPaginationDto, accountId: string) {
     const keyword = dto.keyword || '';
     const [result, total] = await this.repo
-      .createQueryBuilder('tax')
-      .where('tax.status = :status AND tax.accountId = :accountId', {
-        status: dto.status,
-        accountId: accountId,
-      })
+      .createQueryBuilder('amenities')
+      .where(
+        'amenities.status = :status AND amenities.accountId = :accountId',
+        {
+          status: dto.status,
+          accountId: accountId,
+        },
+      )
       .andWhere(
         new Brackets((qb) => {
-          qb.where('tax.taxName LIKE :keyword OR tax.rate LIKE :keyword', {
-            keyword: '%' + keyword + '%',
-          });
+          qb.where(
+            'amenities.name LIKE :keyword OR amenities.desc LIKE :keyword OR amenities.shortDesc LIKE :keyword',
+            {
+              keyword: '%' + keyword + '%',
+            },
+          );
         }),
       )
       .getManyAndCount();
     return { result, total };
   }
 
-  async update(id: string, dto: UpdateTaxDto) {
+  async update(id: string, dto: UpdateAmenityDto) {
     const result = await this.repo.findOne({ where: { id } });
     if (!result) {
-      throw new NotFoundException('Tax Not found!');
+      throw new NotFoundException('Amenities Not found!');
     }
     const obj = Object.assign(result, dto);
     return this.repo.save(obj);
@@ -57,7 +65,7 @@ export class TaxService {
   async status(id: string, dto: DefaultStatusDto) {
     const result = await this.repo.findOne({ where: { id } });
     if (!result) {
-      throw new NotFoundException('Tax Rate Not Found!!');
+      throw new NotFoundException('Amenities Rate Not Found!!');
     }
     const obj = Object.assign(result, { status: dto.status });
     return this.repo.save(obj);
