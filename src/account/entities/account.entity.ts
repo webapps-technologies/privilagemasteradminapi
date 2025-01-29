@@ -4,6 +4,7 @@ import { Business } from 'src/business/entities/business.entity';
 import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
 import { Setting } from 'src/settings/entities/setting.entity';
@@ -90,4 +91,7 @@ export class Account {
 
   @OneToMany(() => Amenity, (amenity) => amenity.account)
   amenities: Amenity[];
+
+  @OneToMany(() => MembershipCard, (membershipCard) => membershipCard.account)
+  membershipCard: MembershipCard[];
 }

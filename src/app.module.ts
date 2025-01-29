@@ -38,6 +38,10 @@ import { PaymentHistoryModule } from './payment-history/payment-history.module';
 import { NotifyModule } from './notify/notify.module';
 import { TaxModule } from './tax/tax.module';
 import { AmenitiesModule } from './amenities/amenities.module';
+import { MembershipCardModule } from './membership-card/membership-card.module';
+import { CardTncModule } from './card-tnc/card-tnc.module';
+import { CardAmenitiesModule } from './card-amenities/card-amenities.module';
+import { CardGalleryModule } from './card-gallery/card-gallery.module';
 
 @Module({
   imports: [
@@ -90,6 +94,10 @@ import { AmenitiesModule } from './amenities/amenities.module';
     NotifyModule,
     TaxModule,
     AmenitiesModule,
+    MembershipCardModule,
+    CardTncModule,
+    CardAmenitiesModule,
+    CardGalleryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

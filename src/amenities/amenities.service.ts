@@ -53,12 +53,24 @@ export class AmenitiesService {
     return { result, total };
   }
 
+  async findOne(id: string) {
+    return this.repo.findOne({ where: { id } });
+  }
+
   async update(id: string, dto: UpdateAmenityDto) {
     const result = await this.repo.findOne({ where: { id } });
     if (!result) {
       throw new NotFoundException('Amenities Not found!');
     }
     const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+  async icon(image: string, result: Amenity) {
+    const obj = Object.assign(result, {
+      icon: process.env.PV_CDN_LINK + image,
+      iconPath: image,
+    });
     return this.repo.save(obj);
   }
 

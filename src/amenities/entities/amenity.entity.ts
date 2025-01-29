@@ -1,10 +1,12 @@
 import { Account } from 'src/account/entities/account.entity';
+import { CardAmenity } from 'src/card-amenities/entities/card-amenity.entity';
 import { DefaultStatus } from 'src/enum';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -47,4 +49,7 @@ export class Amenity {
     onDelete: 'CASCADE',
   })
   account: Account[];
+
+  @OneToMany(() => CardAmenity, (cardAmenities) => cardAmenities.amenities)
+  cardAmenities: CardAmenity[];
 }
