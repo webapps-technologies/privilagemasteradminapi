@@ -24,6 +24,8 @@ import {
   BusinessCreateDto,
   BusinessLoginDto,
   ForgotPassDto,
+  OtpDto,
+  SigninDto,
   VerifyOtpDto,
 } from './dto/login.dto';
 import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
@@ -154,6 +156,60 @@ export class AuthService {
     return { token, business: { id: result.id, email: result.email } };
   }
 
+  async memberLogin(dto: SigninDto) {
+    let user = await this.repo.findOne({
+      where: { phoneNumber: dto.loginId, roles: UserRole.USER },
+    });
+    if (!user) {
+      const obj = Object.create({
+        phoneNumber: dto.loginId,
+        type: LoginType.PHONE,
+        roles: UserRole.USER,
+        // fcm,
+      });
+      user = await this.repo.save(obj);
+      const udObj = Object.create({
+        accountId: user.id,
+      });
+      await this.userDetailRepo.save(udObj);
+    }
+    // const fcmObj = Object.assign(user,{fcm: fcm});
+    // await this.repo.save(fcmObj);
+
+    const otp = 783200;
+    // const otp = Math.floor(100000 + Math.random() * 9000);
+    // sendOtp(+loginId, otp);
+    this.cacheManager.set(dto.loginId, otp, 10 * 60 * 1000);
+    return { loginId: dto.loginId };
+  }
+
+  async memberVerifyOtp(dto: OtpDto) {
+    const user = await this.getUserDetails(dto.loginId, UserRole.USER);
+    const sentOtp = await this.cacheManager.get(dto.loginId);
+
+    // if (phoneNumber != '8092326469') {
+    if (dto.otp != sentOtp) {
+      throw new UnauthorizedException('Invalid otp!');
+    }
+    // }
+    const token = await APIFeatures.assignJwtToken(user.id, this.jwtService);
+
+    const userName = user.userDetail[0].fName;
+    if (userName == null) {
+      return {
+        token,
+        latest: true,
+        status: user.userDetail[0].status,
+      };
+    } else {
+      return {
+        token,
+        latest: false,
+        status: user.userDetail[0].status,
+      };
+    }
+  }
+
   async logout(accountId: string, ip: string) {
     const admin = await this.repo
       .createQueryBuilder('account')
@@ -239,7 +295,7 @@ export class AuthService {
   ): Promise<any> => {
     const query = this.repo
       .createQueryBuilder('account')
-      .leftJoinAndSelect('account.companyDetail', 'companyDetail')
+      .leftJoinAndSelect('account.business', 'business')
       .leftJoinAndSelect('account.userDetail', 'userDetail')
       .leftJoinAndSelect('account.staffDetail', 'staffDetail');
     if (!role && role == UserRole.USER) {

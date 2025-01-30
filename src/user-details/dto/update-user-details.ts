@@ -15,24 +15,19 @@ export class UpdateUserDetailDto {
   @IsString()
   @MinLength(0)
   @MaxLength(50)
-  name: string;
+  fName: string;
 
   @IsOptional()
   @IsString()
   @MinLength(0)
   @MaxLength(50)
-  workStatus: string;
+  mName: string;
 
   @IsOptional()
-  city: string;
-
-  @IsOptional()
-  area: string;
-
-  @IsOptional()
+  @IsString()
   @MinLength(0)
   @MaxLength(50)
-  mobileNumber: string;
+  lName: string;
 
   @IsOptional()
   @MinLength(0)
@@ -42,26 +37,17 @@ export class UpdateUserDetailDto {
   @IsOptional()
   @MinLength(0)
   @MaxLength(100)
-  dob: string;
+  email: string;
 
   @IsOptional()
   @MinLength(0)
   @MaxLength(500)
-  currLocation: string;
+  address1: string;
 
   @IsOptional()
   @MinLength(0)
   @MaxLength(500)
-  hometown: string;
-
-  @IsOptional()
-  totalExpYear: string;
-
-  @IsOptional()
-  totalExpMonth: string;
-  
-  @IsOptional()
-  currSalary: string;
+  address2: string;
 
   @IsOptional()
   accountId: string;

@@ -15,9 +15,9 @@ export class PagesController {
   constructor(private readonly pagesService: PagesService) {}
 
   @Get('all')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard,PermissionsGuard)
   @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.READ, 'page'])
+  // @CheckPermissions([PermissionAction.READ, 'page'])
   findAll() {
     return this.pagesService.findAll();
   }
@@ -28,10 +28,10 @@ export class PagesController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(AuthGuard('jwt'), RolesGuard, PermissionsGuard)
   @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.UPDATE, 'page'])
-  update(@Param('id') id: string, @Body() updatePageDto: PageDto) {
-    return this.pagesService.update(+id, updatePageDto);
+  // @CheckPermissions([PermissionAction.UPDATE, 'page'])
+  update(@Param('id') id: string, @Body() dto: PageDto) {
+    return this.pagesService.update(+id, dto);
   }
 }

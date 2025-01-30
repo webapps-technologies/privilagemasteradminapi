@@ -26,14 +26,6 @@ export class UserDetailsService {
     if (!result) {
       throw new NotFoundException('User profile not found!');
     }
-    if (dto.totalExpYear >= '1') {
-      const obj = Object.assign(result, {
-        workStatus: 'WORKING',
-        totalExpYear: dto.totalExpYear,
-        totalExpMonth: dto.totalExpMonth,
-      });
-      return this.repo.save(obj);
-    }
     const obj = Object.assign(result, dto);
     return this.repo.save(obj);
   }
@@ -41,7 +33,7 @@ export class UserDetailsService {
   async profileImage(image: string, result: UserDetail) {
     const obj = Object.assign(result, {
       profile: process.env.PV_CDN_LINK + image,
-      profileName: image,
+      profilePath: image,
     });
     return this.repo.save(obj);
   }

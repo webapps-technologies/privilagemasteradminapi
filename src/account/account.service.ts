@@ -87,7 +87,7 @@ export class AccountService {
         roles: UserRole.ADMIN,
       })
       .getOne();
-      return result;
+    return result;
   }
 
   async getStaffDetails(dto: DefaultStatusPaginationDto) {
@@ -154,31 +154,31 @@ export class AccountService {
     return { perms };
   }
 
-  async updateEmail(dto: EmailUpdateDto, accountId: string) {
-    const user = await this.repo
+  async userProfile(accountId: string) {
+    const result = await this.repo
       .createQueryBuilder('account')
-      .where(
-        'account.id = :id AND account.roles = :roles AND account.status = :status',
-        {
-          id: accountId,
-          roles: UserRole.USER,
-          status: DefaultStatus.ACTIVE,
-        },
-      )
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+        'account.status',
+        'account.createdAt',
+
+        'userDetail.id',
+        'userDetail.fName',
+        'userDetail.mName',
+        'userDetail.lName',
+        'userDetail.email',
+        'userDetail.gender',
+        'userDetail.profile',
+        'userDetail.address1',
+        'userDetail.address2',
+        'userDetail.status',
+      ])
+      .where('account.id = :id', { id: accountId })
       .getOne();
-    if (!user) {
-      throw new NotFoundException(
-        'Email does not exist. Please register first!',
-      );
-    }
-    const otp = '7832';
-    // const otp = Math.floor(1000 + Math.random() * 9000).toString();
-    await this.cacheManager.set(dto.email, otp, 15 * 60 * 1000);
-
-    // Send the OTP to the user's email
-    // Example: await this.mailService.sendOtpEmail(dto.email, otp);
-
-    return { message: 'OTP sent to your email address' };
+    return result;
   }
 
   async resetEmail(dto: EmailUpdateDto, accountId: string) {

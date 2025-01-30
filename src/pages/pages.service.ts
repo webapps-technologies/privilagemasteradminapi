@@ -22,10 +22,10 @@ export class PagesService {
     return this.getPage(id);
   }
 
-  async update(id: number, updatePageDto: PageDto) {
+  async update(id: number, dto: PageDto) {
     const page = await this.getPage(id);
     this.delPage(id);
-    const obj = Object.assign(page, updatePageDto);
+    const obj = Object.assign(page, dto);
     return this.repo.save(obj);
   }
 

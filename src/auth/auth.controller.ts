@@ -5,6 +5,8 @@ import {
   BusinessCreateDto,
   BusinessLoginDto,
   ForgotPassDto,
+  OtpDto,
+  SigninDto,
   VerifyOtpDto,
 } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -43,6 +45,16 @@ export class AuthController {
   @Post('business/login')
   businessLogin(@Body() dto: BusinessLoginDto){
     return this.authService.businessLogin(dto);
+  }
+
+  @Post('member/login')
+  memberLogin(@Body() dto: SigninDto){
+    return this.authService.memberLogin(dto);
+  }
+
+  @Post('member/verify')
+  memberVerifyOtp(@Body() dto: OtpDto) {
+    return this.authService.memberVerifyOtp(dto);
   }
 
   @Get('logout')

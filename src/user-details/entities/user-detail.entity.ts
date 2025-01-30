@@ -1,5 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
-import { Gender } from 'src/enum';
+import { DefaultStatus, Gender } from 'src/enum';
 import {
   Column,
   CreateDateColumn,
@@ -13,15 +13,36 @@ import {
 export class UserDetail {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  
+
   @Column({ type: 'varchar', length: 100, nullable: true })
   email: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  fName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  mName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  lName: string;
+
+  @Column({ type: 'enum', enum: Gender, nullable: true })
+  gender: Gender;
+
+  @Column({type: 'varchar', length: 500, nullable: true})
+  address1: string;
+
+  @Column({type: 'varchar', length: 500, nullable: true})
+  address2: string;
 
   @Column({ type: 'text', nullable: true })
   profile: string;
 
   @Column({ type: 'text', nullable: true })
-  profileName: string;
+  profilePath: string;
+
+  @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
+  status: DefaultStatus;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -37,6 +37,8 @@ export class OtpDto {
 
 export class SigninDto {
   @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(10)
   loginId: string;
 }
 

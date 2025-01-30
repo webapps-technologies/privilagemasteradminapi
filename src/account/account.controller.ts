@@ -107,11 +107,11 @@ export class AccountController {
     return this.accountService.getStaffProfile(accountId);
   }
 
-  @Get('email/otp')
+  @Get('user/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.USER)
-  updateEmail(@Body() dto: EmailUpdateDto, @CurrentUser() user: Account) {
-    return this.accountService.updateEmail(dto, user.id);
+  userProfile(@CurrentUser() user: Account){
+    return this.accountService.userProfile(user.id);
   }
 
   @Patch()
