@@ -32,7 +32,7 @@ export class CreateAccountDto {
   @MinLength(5)
   @MaxLength(30)
   name: string;
-  
+
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(55)
@@ -54,7 +54,7 @@ export class UpdateStaffPasswordDto {
 export class UpdateStaffDto {
   @IsOptional()
   name: string;
-  
+
   @IsOptional()
   email: string;
 
@@ -93,7 +93,7 @@ export class StatusDto {
   status: DefaultStatus;
 }
 
-export class EmailUpdateDto{
+export class EmailUpdateDto {
   @IsOptional()
   @IsString()
   @MinLength(0)
@@ -104,38 +104,61 @@ export class EmailUpdateDto{
   otp: string;
 }
 
-export class SearchUserPaginationDto {
+export class AddMemberDto {
   @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(10)
-  @Max(100)
-  limit: number;
+  phoneNumber: string;
 
   @IsNotEmpty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(0)
-  offset: number;
+  email: string;
 
-  @IsOptional()
-  keyword: string;
+  @IsNotEmpty()
+  fName: string;
 
-  @IsOptional()
-  status: DefaultStatus;
+  @IsNotEmpty()
+  mName: string;
 
-  @IsOptional()
-  city: string; //current city
+  @IsNotEmpty()
+  lName: string;
 
-  @IsOptional()
-  minExperience: string;
-  
-  @IsOptional()
-  maxExperience: string;
- 
-  @IsOptional()
-  minSalary: string;
-  
-  @IsOptional()
-  maxSalary: string;
+  @IsNotEmpty()
+  gender: string;
+
+  @IsNotEmpty()
+  address1: string;
+
+  @IsNotEmpty()
+  address2: string;
+
+  @IsNotEmpty()
+  city: string;
+
+  @IsNotEmpty()
+  state: string;
+
+  @IsNotEmpty()
+  zipcode: string;
+
+  @IsNotEmpty()
+  businessType: string;
+
+  @IsNotEmpty()
+  businessName: string;
+
+  @IsNotEmpty()
+  gstNumber: string;
+
+  @IsNotEmpty()
+  businessCity: string;
+
+  @IsNotEmpty()
+  businessState: string;
+
+  @IsNotEmpty()
+  businessZipcode: string;
+
+  @IsNotEmpty()
+  businessPhone: string;
+
+  @IsNotEmpty()
+  membershipCardId: string;
 }

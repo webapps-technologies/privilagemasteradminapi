@@ -37,4 +37,20 @@ export class UserDetailsService {
     });
     return this.repo.save(obj);
   }
+
+  async memberDoc(image: string, result: UserDetail) {
+    const obj = Object.assign(result, {
+      memberDoc: process.env.PV_CDN_LINK + image,
+      memberDocPath: image,
+    });
+    return this.repo.save(obj);
+  }
+
+  async businessDoc(image: string, result: UserDetail) {
+    const obj = Object.assign(result, {
+      businessDoc: process.env.PV_CDN_LINK + image,
+      businessDocPath: image,
+    });
+    return this.repo.save(obj);
+  }
 }

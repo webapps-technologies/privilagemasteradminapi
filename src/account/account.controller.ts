@@ -22,6 +22,7 @@ import { PermissionsService } from 'src/permissions/permissions.service';
 import { UserPermissionsService } from 'src/user-permissions/user-permissions.service';
 import { AccountService } from './account.service';
 import {
+  AddMemberDto,
   CreateAccountDto,
   EmailUpdateDto,
   UpdateStaffDto,
@@ -84,6 +85,13 @@ export class AccountController {
     return account;
   }
 
+  @Post('add-member')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async addMember(@Body() dto: AddMemberDto, @CurrentUser() user: Account) {
+    return this.accountService.addMember(dto);
+  }
+
   @Get('admin/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -110,7 +118,7 @@ export class AccountController {
   @Get('user/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.USER)
-  userProfile(@CurrentUser() user: Account){
+  userProfile(@CurrentUser() user: Account) {
     return this.accountService.userProfile(user.id);
   }
 

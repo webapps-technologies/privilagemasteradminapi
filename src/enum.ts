@@ -149,6 +149,7 @@ export enum BusinessStatus {
 
 export enum BusinessType {
   DEMO = 'DEMO',
+  TEST = 'TEST',
 }
 
 export enum PlanType {

@@ -51,8 +51,8 @@ export class BusinessService {
   }
 
   async sendOTPPhone(dto: PhoneVerifyDto) {
-    const otp = 7832;
-    // const otp = Math.floor(1000 + Math.random() * 9000);
+    const otp = 783200;
+    // const otp = Math.floor(100000 + Math.random() * 9000);
     // sendOtp(parseInt(dto.phoneNumber), otp);
     this.cacheManager.set(dto.phoneNumber, otp, 10 * 60 * 1000);
     return { message: 'OTP sent to the Phone Number!' };

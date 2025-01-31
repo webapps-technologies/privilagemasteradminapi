@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DefaultStatus, UserRole } from 'src/enum';
 import { Brackets, Repository } from 'typeorm';
 import {
+  AddMemberDto,
   CreateAccountDto,
   EmailUpdateDto,
   UpdateStaffDto,
@@ -62,6 +63,43 @@ export class AccountService {
     });
     await this.staffRepo.save(object);
     return payload;
+  }
+
+  async addMember(dto: AddMemberDto) {
+    const result = await this.repo.findOne({
+      where: { phoneNumber: dto.phoneNumber },
+    });
+    if (result) {
+      throw new ConflictException('Phone number already exists!');
+    }
+    const accObj = Object.create({
+      phoneNumber: dto.phoneNumber,
+      roles: UserRole.USER,
+    });
+    const account = await this.repo.save(accObj);
+    const udObj = Object.create({
+      accountId: account.id,
+      email: dto.email,
+      fName: dto.fName,
+      mName: dto.mName,
+      lName: dto.lName,
+      gender: dto.gender,
+      address1: dto.address1,
+      address2: dto.address2,
+      city: dto.city,
+      state: dto.state,
+      zipcode: dto.zipcode,
+      businessType: dto.businessType,
+      businessName: dto.businessName,
+      gstNumber: dto.gstNumber,
+      businessCity: dto.businessCity,
+      businessState: dto.businessState,
+      businessZipcode: dto.businessZipcode,
+      businessPhone: dto.businessPhone,
+      membershipCardId: dto.membershipCardId,
+    });
+    await this.udRepo.save(udObj);
+    return account;
   }
 
   async adminProfile(accountId: string) {
@@ -158,6 +196,7 @@ export class AccountService {
     const result = await this.repo
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
       .select([
         'account.id',
         'account.phoneNumber',
@@ -174,7 +213,24 @@ export class AccountService {
         'userDetail.profile',
         'userDetail.address1',
         'userDetail.address2',
+        'userDetail.city',
+        'userDetail.state',
+        'userDetail.zipcode',
+        'userDetail.memberDoc',
+        'userDetail.businessType',
+        'userDetail.businessName',
+        'userDetail.gstNumber',
+        'userDetail.businessDoc',
+        'userDetail.businessCity',
+        'userDetail.businessState',
+        'userDetail.businessZipcode',
+        'userDetail.businessPhone',
         'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validYear',
+        'membershipCard.validMonth',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();

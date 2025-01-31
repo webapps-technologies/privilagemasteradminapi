@@ -1,5 +1,6 @@
 import { Account } from 'src/account/entities/account.entity';
 import { DefaultStatus, Gender } from 'src/enum';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 import {
   Column,
   CreateDateColumn,
@@ -35,11 +36,53 @@ export class UserDetail {
   @Column({type: 'varchar', length: 500, nullable: true})
   address2: string;
 
+  @Column({type: 'varchar', length: 100, nullable: true})
+  city: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  state: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  zipcode: string;
+
   @Column({ type: 'text', nullable: true })
   profile: string;
 
   @Column({ type: 'text', nullable: true })
   profilePath: string;
+
+  @Column({ type: 'text', nullable: true })
+  memberDoc: string;
+
+  @Column({ type: 'text', nullable: true })
+  memberDocPath: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessType: string;
+  
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessName: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  gstNumber: string;
+
+  @Column({ type: 'text', nullable: true })
+  businessDoc: string;
+
+  @Column({ type: 'text', nullable: true })
+  businessDocPath: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessCity: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessState: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessZipcode: string;
+
+  @Column({type: 'varchar', length: 100, nullable: true})
+  businessPhone: string;
 
   @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
   status: DefaultStatus;
@@ -53,10 +96,20 @@ export class UserDetail {
   @Column({ type: 'uuid', nullable: true })
   accountId: string;
 
+  @Column({ type: 'uuid', nullable: true })
+  membershipCardId: string;
+
   @ManyToOne(() => Account, (account) => account.userDetail, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   account: Account[];
+
+  @ManyToOne(() => MembershipCard, (membershipCard) => membershipCard.userDetail, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  membershipCard: MembershipCard[];
 }

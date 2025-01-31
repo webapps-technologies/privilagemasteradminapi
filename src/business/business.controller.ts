@@ -57,14 +57,14 @@ export class BusinessController {
 
   @Post('phone/sendOTP')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(...Object.values(UserRole))
   sendOTPPhone(@Body() dto: PhoneVerifyDto) {
     return this.businessService.sendOTPPhone(dto);
   }
 
   @Post('phone/verify')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(...Object.values(UserRole))
   verifyPhone(@Body() dto: PhoneVerifyDto) {
     return this.businessService.verifyPhone(dto);
   }

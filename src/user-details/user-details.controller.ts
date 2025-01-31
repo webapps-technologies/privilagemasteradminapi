@@ -57,14 +57,76 @@ export class UserDetailsController {
     @CurrentUser() user: Account,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
-        ],
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 })],
       }),
     )
     file: Express.Multer.File,
   ) {
     const fileData = await this.userDetailsService.findOne(user.id);
     return this.userDetailsService.profileImage(file.path, fileData);
+  }
+
+  @Put('memberDoc/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async memberDoc(
+    @Param('accountId') accountId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(accountId);
+    return this.userDetailsService.memberDoc(file.path, fileData);
+  }
+
+  @Put('businessDoc/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async businessDoc(
+    @Param('accountId') accountId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(accountId);
+    return this.userDetailsService.businessDoc(file.path, fileData);
   }
 }

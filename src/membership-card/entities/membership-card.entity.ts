@@ -3,6 +3,7 @@ import { CardAmenity } from 'src/card-amenities/entities/card-amenity.entity';
 import { CardGallery } from 'src/card-gallery/entities/card-gallery.entity';
 import { CardTnc } from 'src/card-tnc/entities/card-tnc.entity';
 import { DefaultStatus } from 'src/enum';
+import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import {
   Column,
   CreateDateColumn,
@@ -63,4 +64,7 @@ export class MembershipCard {
 
   @OneToMany(() => CardAmenity, (cardAmenities) => cardAmenities.membershipCard)
   cardAmenities: CardAmenity[];
+
+  @OneToMany(() => UserDetail, (userDetail) => userDetail.membershipCard)
+  userDetail: UserDetail[];
 }
