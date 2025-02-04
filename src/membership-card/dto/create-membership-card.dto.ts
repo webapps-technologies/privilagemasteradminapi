@@ -17,10 +17,7 @@ export class CreateMembershipCardDto {
   name: string;
 
   @IsNotEmpty()
-  validYear: string;
-
-  @IsNotEmpty()
-  validMonth: string;
+  validity: string;
 
   @IsNotEmpty()
   price: string;

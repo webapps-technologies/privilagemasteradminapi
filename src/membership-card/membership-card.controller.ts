@@ -9,6 +9,11 @@ import {
   UseGuards,
   Query,
   Put,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MembershipCardService } from './membership-card.service';
 import {
@@ -23,6 +28,9 @@ import { UserRole } from 'src/enum';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Account } from 'src/account/entities/account.entity';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('membership-card')
 export class MembershipCardController {
@@ -46,16 +54,44 @@ export class MembershipCardController {
     return this.membershipCardService.findAll(dto, user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.membershipCardService.findOne(+id);
-  }
-
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.BUSINESS)
   update(@Param('id') id: string, @Body() dto: UpdateMembershipCardDto) {
     return this.membershipCardService.update(id, dto);
+  }
+
+  @Put('cardDesign/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/MembershipCard',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async cardDesign(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.membershipCardService.findOne(id);
+    return this.membershipCardService.cardDesign(file.path, fileData);
   }
 
   @Put('status/:id')

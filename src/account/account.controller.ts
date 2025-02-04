@@ -25,6 +25,7 @@ import {
   AddMemberDto,
   CreateAccountDto,
   EmailUpdateDto,
+  MemberPaginationDto,
   UpdateStaffDto,
   UpdateStaffPasswordDto,
 } from './dto/account.dto';
@@ -92,6 +93,13 @@ export class AccountController {
     return this.accountService.addMember(dto);
   }
 
+  @Get('member-list')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async memberList(@Query() dto: MemberPaginationDto) {
+    return this.accountService.memberList(dto);
+  }
+
   @Get('admin/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
@@ -127,14 +135,6 @@ export class AccountController {
   @Roles(UserRole.USER)
   resetEmail(@Body() dto: EmailUpdateDto, @CurrentUser() user: Account) {
     return this.accountService.resetEmail(dto, user.id);
-  }
-
-  @Put('status/:id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(...Object.values(UserRole))
-  @CheckPermissions([PermissionAction.UPDATE, 'account'])
-  recruiterStatus(@Param('id') id: string, @Body() dto: DefaultStatusDto) {
-    return this.accountService.recruiterStatus(id, dto);
   }
 
   @Patch('update/staff/:accountId')

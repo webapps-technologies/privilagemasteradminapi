@@ -12,6 +12,7 @@ import {
   AddMemberDto,
   CreateAccountDto,
   EmailUpdateDto,
+  MemberPaginationDto,
   UpdateStaffDto,
   UpdateStaffPasswordDto,
 } from './dto/account.dto';
@@ -25,6 +26,7 @@ import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { DefaultStatusPaginationDto } from 'src/common/dto/default-status-pagination.dto';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { Menu } from 'src/menus/entities/menu.entity';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 
 @Injectable()
 export class AccountService {
@@ -32,6 +34,8 @@ export class AccountService {
     @InjectRepository(Account) private readonly repo: Repository<Account>,
     @InjectRepository(UserDetail)
     private readonly udRepo: Repository<UserDetail>,
+    @InjectRepository(MembershipCard)
+    private readonly memCardRepo: Repository<MembershipCard>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectRepository(StaffDetail)
     private readonly staffRepo: Repository<StaffDetail>,
@@ -72,6 +76,21 @@ export class AccountService {
     if (result) {
       throw new ConflictException('Phone number already exists!');
     }
+
+    const membershipCard = await this.memCardRepo.findOne({
+      where: { id: dto.membershipCardId },
+    });
+    if (!membershipCard) {
+      throw new NotFoundException('MembershipCard not found!');
+    }
+    const today = new Date();
+    const startDate = new Date().toLocaleDateString('en-CA');
+    const duration = parseInt(membershipCard.validity);
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + duration - 1);
+    const endDateString = endDate.toLocaleDateString('en-CA');
+    const memberId = `MEM-${Math.floor(1000 + Math.random() * 9000)}`;
+
     const accObj = Object.create({
       phoneNumber: dto.phoneNumber,
       roles: UserRole.USER,
@@ -97,9 +116,113 @@ export class AccountService {
       businessZipcode: dto.businessZipcode,
       businessPhone: dto.businessPhone,
       membershipCardId: dto.membershipCardId,
+      membershipValidFrom: startDate,
+      membershipValidTo: endDateString,
+      memberId: memberId,
     });
     await this.udRepo.save(udObj);
     return account;
+  }
+
+  async memberList(dto: MemberPaginationDto) {
+    const keyword = dto.keyword || '';
+    const startDate = new Date(dto.startDate);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(dto.endDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    const query = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+        'account.status',
+        'account.createdAt',
+
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.fName',
+        'userDetail.mName',
+        'userDetail.lName',
+        'userDetail.email',
+        'userDetail.gender',
+        'userDetail.profile',
+        'userDetail.address1',
+        'userDetail.address2',
+        'userDetail.city',
+        'userDetail.state',
+        'userDetail.zipcode',
+        'userDetail.memberDoc',
+        'userDetail.businessType',
+        'userDetail.businessName',
+        'userDetail.gstNumber',
+        'userDetail.businessDoc',
+        'userDetail.businessCity',
+        'userDetail.businessState',
+        'userDetail.businessZipcode',
+        'userDetail.businessPhone',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+      ]);
+    if (dto.status && dto.status.length > 0) {
+      query.andWhere('userDetail.status = :status', {
+        status: dto.status,
+      });
+    }
+    if (dto.phoneNumber && dto.phoneNumber.length > 0) {
+      query.andWhere('account.phoneNumber = :phoneNumber', {
+        phoneNumber: dto.phoneNumber,
+      });
+    }
+    if (dto.membershipType && dto.membershipType.length > 0) {
+      query.andWhere('membershipCard.name = :name', {
+        name: dto.membershipType,
+      });
+    }
+    if (dto.memberId && dto.memberId.length > 0) {
+      query.andWhere('userDetail.memberId = :memberId', {
+        memberId: dto.memberId,
+      });
+    }
+    // if (dto.startDate && dto.endDate) {
+    //   query.andWhere(
+    //     'userDetail.membershipValidFrom >= :startDate AND userDetail.membershipValidTo <= :endDate',
+    //     {
+    //       startDate: startDate,
+    //       endDate: endDate,
+    //     },
+    //   );
+    // }
+    if (dto.keyword && dto.keyword.length > 0) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            'userDetail.fName LIKE :keyword OR userDetail.mName LIKE :keyword OR userDetail.lName LIKE :keyword OR userDetail.gender LIKE :keyword OR userDetail.address1 LIKE :keyword OR userDetail.address2 LIKE :keyword OR userDetail.businessName LIKE :keyword OR userDetail.gstNumber LIKE :keyword',
+            {
+              keyword: '%' + keyword + '%',
+            },
+          );
+        }),
+      );
+    }
+    const [result, total] = await query
+      .orderBy({ 'account.createdAt': 'DESC' })
+      .take(dto.limit)
+      .skip(dto.offset)
+      .getManyAndCount();
+
+    return { result, total };
   }
 
   async adminProfile(accountId: string) {
@@ -205,6 +328,9 @@ export class AccountService {
         'account.createdAt',
 
         'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
         'userDetail.fName',
         'userDetail.mName',
         'userDetail.lName',
@@ -229,8 +355,7 @@ export class AccountService {
 
         'membershipCard.id',
         'membershipCard.name',
-        'membershipCard.validYear',
-        'membershipCard.validMonth',
+        'membershipCard.validity',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();
@@ -269,15 +394,6 @@ export class AccountService {
     result.userDetail[0].email = dto.email;
     this.udRepo.save(result.userDetail[0]);
     return account;
-  }
-
-  async recruiterStatus(id: string, dto: DefaultStatusDto) {
-    const result = await this.repo.findOne({ where: { id } });
-    if (!result) {
-      throw new NotFoundException('Account Not Found With This ID.');
-    }
-    const obj = Object.assign(result, dto);
-    return this.repo.save(obj);
   }
 
   async updateStaff(accountId: string, dto: UpdateStaffDto) {

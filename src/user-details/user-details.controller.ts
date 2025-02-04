@@ -22,8 +22,12 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
-import { PaginationSDto, UpdateUserDetailDto } from './dto/update-user-details';
+import {
+  UpdateMemberDto,
+  UpdateUserDetailDto,
+} from './dto/update-user-details';
 import { UserDetailsService } from './user-details.service';
+import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 
 @Controller('user-details')
 export class UserDetailsController {
@@ -35,6 +39,16 @@ export class UserDetailsController {
   update(@Body() dto: UpdateUserDetailDto, @CurrentUser() user: Account) {
     dto.accountId = user.id;
     return this.userDetailsService.update(dto, user.id);
+  }
+
+  @Patch('update-member/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  updateMember(
+    @Param('accountId') accountId: string,
+    @Body() dto: UpdateMemberDto,
+  ) {
+    return this.userDetailsService.updateMember(accountId, dto);
   }
 
   @Put('profileImage')
@@ -68,6 +82,7 @@ export class UserDetailsController {
 
   @Put('memberDoc/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -100,6 +115,7 @@ export class UserDetailsController {
 
   @Put('businessDoc/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -128,5 +144,15 @@ export class UserDetailsController {
   ) {
     const fileData = await this.userDetailsService.findOne(accountId);
     return this.userDetailsService.businessDoc(file.path, fileData);
+  }
+
+  @Put('member/status/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  memberStatus(
+    @Param('accountId') accountId: string,
+    @Body() dto: DefaultStatusDto,
+  ) {
+    return this.userDetailsService.memberStatus(accountId, dto);
   }
 }

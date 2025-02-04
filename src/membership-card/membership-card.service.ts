@@ -32,8 +32,7 @@ export class MembershipCardService {
       .select([
         'membershipCard.id',
         'membershipCard.name',
-        'membershipCard.validYear',
-        'membershipCard.validMonth',
+        'membershipCard.validity',
         'membershipCard.price',
         'membershipCard.currencyType',
         'membershipCard.memberCount',
@@ -77,8 +76,8 @@ export class MembershipCardService {
     return { result, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} membershipCard`;
+  async findOne(id: string) {
+    return this.repo.findOne({ where: { id } });
   }
 
   async update(id: string, dto: UpdateMembershipCardDto) {
@@ -87,6 +86,14 @@ export class MembershipCardService {
       throw new NotFoundException('Card Not Found!');
     }
     const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+  async cardDesign(image: string, result: MembershipCard) {
+    const obj = Object.assign(result, {
+      cardDesign: process.env.PV_CDN_LINK + image,
+      cardDesignPath: image,
+    });
     return this.repo.save(obj);
   }
 

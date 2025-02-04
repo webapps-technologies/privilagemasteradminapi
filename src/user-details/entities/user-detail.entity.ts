@@ -30,19 +30,19 @@ export class UserDetail {
   @Column({ type: 'enum', enum: Gender, nullable: true })
   gender: Gender;
 
-  @Column({type: 'varchar', length: 500, nullable: true})
+  @Column({ type: 'varchar', length: 500, nullable: true })
   address1: string;
 
-  @Column({type: 'varchar', length: 500, nullable: true})
+  @Column({ type: 'varchar', length: 500, nullable: true })
   address2: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   city: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   state: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   zipcode: string;
 
   @Column({ type: 'text', nullable: true })
@@ -57,13 +57,13 @@ export class UserDetail {
   @Column({ type: 'text', nullable: true })
   memberDocPath: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessType: string;
-  
-  @Column({type: 'varchar', length: 100, nullable: true})
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessName: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   gstNumber: string;
 
   @Column({ type: 'text', nullable: true })
@@ -72,17 +72,26 @@ export class UserDetail {
   @Column({ type: 'text', nullable: true })
   businessDocPath: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessCity: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessState: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessZipcode: string;
 
-  @Column({type: 'varchar', length: 100, nullable: true})
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessPhone: string;
+
+  @Column({ type: 'date', nullable: true })
+  membershipValidFrom: Date;
+
+  @Column({ type: 'date', nullable: true })
+  membershipValidTo: Date;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  memberId: string;
 
   @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
   status: DefaultStatus;
@@ -106,10 +115,14 @@ export class UserDetail {
   })
   account: Account[];
 
-  @ManyToOne(() => MembershipCard, (membershipCard) => membershipCard.userDetail, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(
+    () => MembershipCard,
+    (membershipCard) => membershipCard.userDetail,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  )
   membershipCard: MembershipCard[];
 }

@@ -12,10 +12,11 @@ import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { NodeMailerModule } from 'src/node-mailer/node-mailer.module';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { Menu } from 'src/menus/entities/menu.entity';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Account, UserDetail, StaffDetail, Menu]),
+    TypeOrmModule.forFeature([Account, UserDetail, StaffDetail, Menu, MembershipCard]),
     AuthModule,
     MenusModule,
     PermissionsModule,

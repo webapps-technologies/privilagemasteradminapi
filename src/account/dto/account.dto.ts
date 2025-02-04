@@ -162,3 +162,43 @@ export class AddMemberDto {
   @IsNotEmpty()
   membershipCardId: string;
 }
+
+export class MemberPaginationDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(10)
+  @Max(50)
+  limit: number;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  @Max(1000)
+  offset: number;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  keyword: string;
+
+  @IsNotEmpty()
+  @IsEnum(DefaultStatus)
+  status: DefaultStatus;
+
+  @IsOptional()
+  phoneNumber: string;
+
+  @IsOptional()
+  membershipType: string;
+
+  @IsOptional()
+  memberId: string;
+
+  @IsOptional()
+  startDate: string;
+
+  @IsOptional()
+  endDate: string;
+}

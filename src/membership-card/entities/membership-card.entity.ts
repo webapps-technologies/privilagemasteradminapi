@@ -26,10 +26,7 @@ export class MembershipCard {
   name: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  validYear: string;
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  validMonth: string;
+  validity: string; //In Days
 
   @Column({ type: 'float', default: 0 })
   price: string;
@@ -42,6 +39,12 @@ export class MembershipCard {
 
   @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
   status: DefaultStatus;
+
+  @Column({type: 'text', nullable: true})
+  cardDesign: string;
+
+  @Column({type: 'text', nullable: true})
+  cardDesignPath: string;
 
   @CreateDateColumn()
   createdAt: Date;

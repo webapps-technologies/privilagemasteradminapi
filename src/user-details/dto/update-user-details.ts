@@ -70,3 +70,59 @@ export class PaginationSDto {
   @IsOptional()
   keyword: string;
 }
+
+export class UpdateMemberDto {
+  @IsOptional()
+  email: string;
+
+  @IsOptional()
+  fName: string;
+
+  @IsOptional()
+  mName: string;
+
+  @IsOptional()
+  lName: string;
+
+  @IsOptional()
+  gender: string;
+
+  @IsOptional()
+  address1: string;
+
+  @IsOptional()
+  address2: string;
+
+  @IsOptional()
+  city: string;
+
+  @IsOptional()
+  state: string;
+
+  @IsOptional()
+  zipcode: string;
+
+  @IsOptional()
+  businessType: string;
+
+  @IsOptional()
+  businessName: string;
+
+  @IsOptional()
+  gstNumber: string;
+
+  @IsOptional()
+  businessCity: string;
+
+  @IsOptional()
+  businessState: string;
+
+  @IsOptional()
+  businessZipcode: string;
+
+  @IsOptional()
+  businessPhone: string;
+
+  // @IsNotEmpty()
+  // membershipCardId: string;
+}
