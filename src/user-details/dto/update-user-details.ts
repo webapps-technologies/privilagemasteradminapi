@@ -12,6 +12,9 @@ import {
 
 export class UpdateUserDetailDto {
   @IsOptional()
+  membershipCardId: string;
+
+  @IsOptional()
   @IsString()
   @MinLength(0)
   @MaxLength(50)
@@ -48,6 +51,91 @@ export class UpdateUserDetailDto {
   @MinLength(0)
   @MaxLength(500)
   address2: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  landMark: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  fatherName: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  dob: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  qualification: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  profession: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  panNumber: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  income: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  city: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  state: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  zipcode: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  businessType: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  businessName: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  gstNumber: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  businessCity: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  businessState: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
+  businessZipcode: string;
+
+  @IsOptional()
+  @MinLength(10)
+  @MaxLength(10)
+  businessPhone: string;
 
   @IsOptional()
   accountId: string;

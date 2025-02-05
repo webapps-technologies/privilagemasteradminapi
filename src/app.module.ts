@@ -43,6 +43,7 @@ import { CardTncModule } from './card-tnc/card-tnc.module';
 import { CardAmenitiesModule } from './card-amenities/card-amenities.module';
 import { CardGalleryModule } from './card-gallery/card-gallery.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
+import { OtherMembershipModule } from './other-membership/other-membership.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { ContactUsModule } from './contact-us/contact-us.module';
     CardAmenitiesModule,
     CardGalleryModule,
     ContactUsModule,
+    OtherMembershipModule,
   ],
   controllers: [AppController],
   providers: [AppService],

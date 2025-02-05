@@ -37,6 +37,27 @@ export class UserDetail {
   address2: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
+  landMark: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  fatherName: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  dob: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  qualification: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  profession: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  panNumber: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  income: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
   city: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
@@ -91,7 +112,10 @@ export class UserDetail {
   membershipValidTo: Date;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  memberId: string;
+  memberId: string; 
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  cardNumber: string;
 
   @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
   status: DefaultStatus;

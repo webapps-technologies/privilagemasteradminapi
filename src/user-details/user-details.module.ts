@@ -6,10 +6,11 @@ import { UserDetail } from './entities/user-detail.entity';
 import { UserDetailsController } from './user-details.controller';
 import { UserDetailsService } from './user-details.service';
 import { Account } from 'src/account/entities/account.entity';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserDetail,Account]),
+    TypeOrmModule.forFeature([UserDetail, Account, MembershipCard]),
     AuthModule,
     MulterModule.register({ dest: './uploads/UserDetail' }),
   ],

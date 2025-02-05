@@ -194,8 +194,8 @@ export class AuthService {
     // }
     const token = await APIFeatures.assignJwtToken(user.id, this.jwtService);
 
-    const userName = user.userDetail[0].fName;
-    if (userName == null) {
+    const check = user.userDetail[0].membershipCardId;    
+    if (check == null) {
       return {
         token,
         latest: true,

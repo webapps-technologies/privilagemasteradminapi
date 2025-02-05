@@ -8,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { MembershipCard } from './entities/membership-card.entity';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
+import { DefaultStatus } from 'src/enum';
 
 @Injectable()
 export class MembershipCardService {
@@ -74,6 +76,88 @@ export class MembershipCardService {
       .skip(dto.offset)
       .getManyAndCount();
     return { result, total };
+  }
+
+  async find(dto: CommonPaginationDto, accountId: string) {
+    const keyword = dto.keyword || '';
+    const query = await this.repo
+      .createQueryBuilder('membershipCard')
+      .leftJoinAndSelect('membershipCard.cardGallery', 'cardGallery')
+      .leftJoinAndSelect('membershipCard.cardTnc', 'cardTnc')
+      .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
+      .leftJoinAndSelect('cardAmenities.amenities', 'amenities')
+      .select([
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+        'membershipCard.status',
+        'membershipCard.createdAt',
+        'membershipCard.accountId',
+
+        'cardGallery.id',
+        'cardGallery.image',
+
+        'cardTnc.id',
+        'cardTnc.terms',
+
+        'cardAmenities.id',
+        'amenities.id',
+        'amenities.name',
+        'amenities.icon',
+        'amenities.desc',
+        'amenities.shortDesc',
+      ])
+      .where(
+        'membershipCard.status = :status AND membershipCard.accountId = :accountId',
+        { status: DefaultStatus.ACTIVE, accountId: accountId },
+      );
+    const [result, total] = await query
+      .take(dto.limit)
+      .skip(dto.offset)
+      .getManyAndCount();
+    return { result, total };
+  }
+
+  async findOneByUser(id: string) {
+    const result = await this.repo
+      .createQueryBuilder('membershipCard')
+      .leftJoinAndSelect('membershipCard.cardGallery', 'cardGallery')
+      .leftJoinAndSelect('membershipCard.cardTnc', 'cardTnc')
+      .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
+      .leftJoinAndSelect('cardAmenities.amenities', 'amenities')
+      .select([
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+        'membershipCard.status',
+        'membershipCard.createdAt',
+        'membershipCard.accountId',
+
+        'cardGallery.id',
+        'cardGallery.image',
+
+        'cardTnc.id',
+        'cardTnc.terms',
+
+        'cardAmenities.id',
+        'amenities.id',
+        'amenities.name',
+        'amenities.icon',
+        'amenities.desc',
+        'amenities.shortDesc',
+      ])
+      .where('membershipCard.status = :status AND membershipCard.id = :id', {
+        status: DefaultStatus.ACTIVE,
+        id: id,
+      })
+      .getOne();
+    return result;
   }
 
   async findOne(id: string) {

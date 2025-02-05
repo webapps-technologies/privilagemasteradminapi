@@ -6,6 +6,7 @@ import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { OtherMembership } from 'src/other-membership/entities/other-membership.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
 import { Setting } from 'src/settings/entities/setting.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
@@ -88,6 +89,12 @@ export class Account {
 
   @OneToMany(() => Tax, (tax) => tax.account)
   tax: Tax[];
+
+  @OneToMany(
+    () => OtherMembership,
+    (otherMembership) => otherMembership.account,
+  )
+  otherMembership: OtherMembership[];
 
   @OneToMany(() => Amenity, (amenity) => amenity.account)
   amenities: Amenity[];

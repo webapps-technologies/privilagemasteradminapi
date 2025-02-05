@@ -9,13 +9,14 @@ import {
 } from './dto/update-user-details';
 import { UserDetail } from './entities/user-detail.entity';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 
 @Injectable()
 export class UserDetailsService {
   constructor(
     @InjectRepository(UserDetail) private readonly repo: Repository<UserDetail>,
-    @InjectRepository(Account)
-    private readonly accountrepo: Repository<Account>,
+    @InjectRepository(MembershipCard)
+    private readonly memCardRepo: Repository<MembershipCard>,
   ) {}
 
   async findOne(id: string) {
@@ -31,7 +32,53 @@ export class UserDetailsService {
     if (!result) {
       throw new NotFoundException('User profile not found!');
     }
-    const obj = Object.assign(result, dto);
+    const membershipCard = await this.memCardRepo.findOne({
+      where: { id: dto.membershipCardId },
+    });
+    if (!membershipCard) {
+      throw new NotFoundException('MembershipCard not found!');
+    }
+    const today = new Date();
+    const startDate = new Date().toLocaleDateString('en-CA');
+    const duration = parseInt(membershipCard.validity);
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + duration - 1);
+    const endDateString = endDate.toLocaleDateString('en-CA');
+    const memberId = `MEM-${Math.floor(1000 + Math.random() * 9000)}`;
+    const cardNumber = `CRD-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const obj = Object.assign(result, {
+      membershipCardId: dto.membershipCardId,
+      email: dto.email,
+      fName: dto.fName,
+      mName: dto.mName,
+      lName: dto.lName,
+      gender: dto.gender,
+      address1: dto.address1,
+      address2: dto.address2,
+      city: dto.city,
+      state: dto.state,
+      zipcode: dto.zipcode,
+      businessType: dto.businessType,
+      businessName: dto.businessName,
+      gstNumber: dto.gstNumber,
+      businessCity: dto.businessCity,
+      businessState: dto.businessState,
+      businessZipcode: dto.businessZipcode,
+      businessPhone: dto.businessPhone,
+      landMark: dto.landMark,
+      fatherName: dto.fatherName,
+      dob: dto.dob,
+      qualification: dto.qualification,
+      profession: dto.profession,
+      panNumber: dto.panNumber,
+      income: dto.income,
+      
+      cardNumber: cardNumber,
+      membershipValidFrom: startDate,
+      membershipValidTo: endDateString,
+      memberId: memberId,
+    });
     return this.repo.save(obj);
   }
 

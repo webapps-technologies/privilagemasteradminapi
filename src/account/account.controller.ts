@@ -100,6 +100,13 @@ export class AccountController {
     return this.accountService.memberList(dto);
   }
 
+  @Get('member/particular/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async findOneMember(@Param('accountId') accountId: string) {
+    return this.accountService.findOneMember(accountId);
+  }
+
   @Get('admin/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)

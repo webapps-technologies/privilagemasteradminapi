@@ -31,6 +31,7 @@ import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 @Controller('membership-card')
 export class MembershipCardController {
@@ -52,6 +53,19 @@ export class MembershipCardController {
     @CurrentUser() user: Account,
   ) {
     return this.membershipCardService.findAll(dto, user.id);
+  }
+
+  @Get('user/list/:accountId')
+  find(
+    @Query() dto: CommonPaginationDto,
+    @Param('accountId') accountId: string,
+  ) {
+    return this.membershipCardService.find(dto, accountId);
+  }
+
+  @Get('user/particular/:id')
+  findOneByUser(@Param('id') id: string) {
+    return this.membershipCardService.findOneByUser(id);
   }
 
   @Patch(':id')
