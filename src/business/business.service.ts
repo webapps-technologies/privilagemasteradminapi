@@ -35,7 +35,7 @@ export class BusinessService {
   ) {}
 
   async sendOTPEmail(dto: EmailVerifyDto) {
-    const otp = 7832;
+    const otp = 783200;
     // const otp = Math.floor(100000 + Math.random() * 9000);
     // this.nodeMailerService.sendOtpInEmailBusiness(dto.email, otp);
     this.cacheManager.set(dto.email, otp, 10 * 60 * 1000); // for 10 mins
