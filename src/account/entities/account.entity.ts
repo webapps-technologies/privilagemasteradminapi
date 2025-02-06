@@ -5,6 +5,7 @@ import { CompanyDetail } from 'src/company-details/entities/company-detail.entit
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
+import { News } from 'src/news/entities/news.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { OtherMembership } from 'src/other-membership/entities/other-membership.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
@@ -101,4 +102,7 @@ export class Account {
 
   @OneToMany(() => MembershipCard, (membershipCard) => membershipCard.account)
   membershipCard: MembershipCard[];
+
+  @OneToMany(() => News, (news) => news.account)
+  news: News[];
 }

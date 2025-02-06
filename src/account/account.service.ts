@@ -27,6 +27,7 @@ import { DefaultStatusPaginationDto } from 'src/common/dto/default-status-pagina
 import { createObjectCsvStringifier } from 'csv-writer';
 import { Menu } from 'src/menus/entities/menu.entity';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
+import { generateQrCode } from 'src/utils/qrCode.util';
 
 @Injectable()
 export class AccountService {
@@ -438,6 +439,68 @@ export class AccountService {
       .where('account.id = :id', { id: accountId })
       .getOne();
     return result;
+  }
+
+  async userDetailQRCode(accountId: string) {
+    const userProfile = await this.repo
+    .createQueryBuilder('account')
+    .leftJoinAndSelect('account.userDetail', 'userDetail')
+    .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+    .select([
+      'account.id',
+      'account.phoneNumber',
+      'account.roles',
+      'account.createdAt',
+
+      'userDetail.id',
+      'userDetail.memberId',
+      'userDetail.membershipValidFrom',
+      'userDetail.membershipValidTo',
+      'userDetail.fName',
+      'userDetail.mName',
+      'userDetail.lName',
+      'userDetail.email',
+      'userDetail.gender',
+      'userDetail.profile',
+      'userDetail.address1',
+      'userDetail.address2',
+      'userDetail.city',
+      'userDetail.state',
+      'userDetail.zipcode',
+      'userDetail.businessType',
+      'userDetail.businessName',
+      'userDetail.memberDoc',
+      'userDetail.gstNumber',
+      'userDetail.businessDoc',
+      'userDetail.businessCity',
+      'userDetail.businessState',
+      'userDetail.businessZipcode',
+      'userDetail.businessPhone',
+      'userDetail.cardNumber',
+      'userDetail.landMark',
+      'userDetail.fatherName',
+      'userDetail.dob',
+      'userDetail.qualification',
+      'userDetail.profession',
+      'userDetail.panNumber',
+      'userDetail.income',
+      'userDetail.status',
+
+      'membershipCard.id',
+      'membershipCard.name',
+      'membershipCard.validity',
+      'membershipCard.price',
+      'membershipCard.currencyType',
+      'membershipCard.memberCount',
+      'membershipCard.cardDesign',
+    ])
+    .where('account.id = :id', { id: accountId })
+    .getOne();
+    if (!userProfile) {
+      throw new Error('User not found');
+    }
+    const qrCode = await generateQrCode(userProfile);
+    return { qrCode: qrCode };
   }
 
   async resetEmail(dto: EmailUpdateDto, accountId: string) {

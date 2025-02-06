@@ -137,6 +137,13 @@ export class AccountController {
     return this.accountService.userProfile(user.id);
   }
 
+  @Get('qrcode')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
+  async getUserQrCode(@CurrentUser() user: Account) {
+    return this.accountService.userDetailQRCode(user.id);
+  }
+
   @Patch()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.USER)
