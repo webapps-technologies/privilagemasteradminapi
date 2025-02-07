@@ -23,6 +23,7 @@ import {
   CreateBusinessDto,
   EmailVerifyDto,
   PhoneVerifyDto,
+  VerifyBusinessDto,
 } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -122,6 +123,13 @@ export class BusinessController {
     res.set('Content-Disposition', `attachment; filename="${name}"`);
     pdf.pipe(res);
     pdf.end();
+  }
+
+  @Patch('business-active')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  acitveBusiness(@Body() dto: VerifyBusinessDto, @CurrentUser() user: Account) {
+    return this.businessService.acitveBusiness(dto, user.id);
   }
 
   @Patch('update-business/:id')

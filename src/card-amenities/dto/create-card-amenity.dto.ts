@@ -1,9 +1,15 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCardAmenityDto {
-    @IsNotEmpty()
-    membershipCardId: string;
+  @IsNotEmpty()
+  membershipCardId: string;
 
-    @IsNotEmpty()
-    amenitiesId: [];
+  @IsNotEmpty()
+  name: string;
+
+  @IsNotEmpty()
+  shortDesc: string;
+
+  @IsNotEmpty()
+  desc: string;
 }

@@ -9,6 +9,7 @@ import { BoolStatusDto } from 'src/common/dto/bool-status.dto';
 import { Brackets, Repository } from 'typeorm';
 import { CityDto, PaginationSDto, UpdateCityDto } from './dto/city.dto';
 import { City } from './entities/city.entity';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 @Injectable()
 export class CityService {
@@ -37,6 +38,34 @@ export class CityService {
         stateId: dto.stateId,
       });
     }
+    const [result, count] = await query
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('city.name LIKE :pname', {
+            pname: '%' + keyword + '%',
+          });
+        }),
+      )
+      .orderBy(
+        `CASE WHEN city.name LIKE '${keyword}%' THEN 0 ELSE 1 END, city.name`,
+        'ASC',
+      )
+      .take(dto.limit)
+      .skip(dto.offset)
+      .getManyAndCount();
+
+    return { result, count };
+  }
+
+  async find(dto: CommonPaginationDto) {
+    const keyword = dto.keyword || '';
+    const query = await this.repo.createQueryBuilder('city');
+    query.where('city.status = :status', { status: true });
+    // if (dto.stateId) {
+    //   query.andWhere('city.stateId = :stateId', {
+    //     stateId: dto.stateId,
+    //   });
+    // }
     const [result, count] = await query
       .andWhere(
         new Brackets((qb) => {

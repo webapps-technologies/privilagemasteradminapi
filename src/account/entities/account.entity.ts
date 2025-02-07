@@ -1,7 +1,5 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
-import { Amenity } from 'src/amenities/entities/amenity.entity';
 import { Business } from 'src/business/entities/business.entity';
-import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
@@ -76,9 +74,6 @@ export class Account {
   @OneToMany(() => UserDetail, (userDetail) => userDetail.account)
   userDetail: UserDetail[];
 
-  @OneToMany(() => CompanyDetail, (companyDetail) => companyDetail.account)
-  companyDetail: CompanyDetail[];
-
   @OneToMany(() => StaffDetail, (staffDetail) => staffDetail.account)
   staffDetail: StaffDetail[];
 
@@ -96,9 +91,6 @@ export class Account {
     (otherMembership) => otherMembership.account,
   )
   otherMembership: OtherMembership[];
-
-  @OneToMany(() => Amenity, (amenity) => amenity.account)
-  amenities: Amenity[];
 
   @OneToMany(() => MembershipCard, (membershipCard) => membershipCard.account)
   membershipCard: MembershipCard[];

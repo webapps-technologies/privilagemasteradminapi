@@ -67,6 +67,7 @@ export class VerifyOtpDto {
   email: string;
 
   @IsNotEmpty()
+  @Type(() => Number)
   @IsNumber()
   otp: string;
 }

@@ -18,6 +18,9 @@ export class UpdateMembershipCardDto {
   currencyType: string;
 
   @IsOptional()
+  cardType: string;
+
+  @IsOptional()
   @Type(() => Number)
   memberCount: number;
 }

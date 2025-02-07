@@ -26,6 +26,9 @@ export class CreateMembershipCardDto {
   currencyType: string;
 
   @IsNotEmpty()
+  cardType: string;
+
+  @IsNotEmpty()
   @Type(() => Number)
   memberCount: number;
 

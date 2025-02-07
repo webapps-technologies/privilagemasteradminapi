@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateCardAmenityDto } from './create-card-amenity.dto';
+import { IsOptional } from 'class-validator';
 
-export class UpdateCardAmenityDto extends PartialType(CreateCardAmenityDto) {}
+export class UpdateCardAmenityDto {
+  @IsOptional()
+  name: string;
+
+  @IsOptional()
+  shortDesc: string;
+
+  @IsOptional()
+  desc: string;
+}

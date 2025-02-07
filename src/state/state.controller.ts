@@ -17,6 +17,7 @@ import { BoolStatusDto } from 'src/common/dto/bool-status.dto';
 import { UserRole } from 'src/enum';
 import { PaginationSDto, StateDto, StateUpdateDto } from './dto/state.dto';
 import { StateService } from './state.service';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 @Controller('state')
 export class StateController {
@@ -34,6 +35,11 @@ export class StateController {
   @Roles(...Object.values(UserRole))
   findAll(@Query() dto: PaginationSDto) {
     return this.stateService.findAll(dto);
+  }
+
+  @Get('list')
+  find(@Query() dto: CommonPaginationDto){
+    return this.stateService.find(dto);
   }
 
   @Patch(':id')

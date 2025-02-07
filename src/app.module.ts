@@ -9,7 +9,6 @@ import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { CompanyDetailsModule } from './company-details/company-details.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { MenusModule } from './menus/menus.module';
 import { NotificationsModule } from './notifications/notifications.module';
@@ -37,7 +36,6 @@ import { BusinessContractModule } from './business-contract/business-contract.mo
 import { PaymentHistoryModule } from './payment-history/payment-history.module';
 import { NotifyModule } from './notify/notify.module';
 import { TaxModule } from './tax/tax.module';
-import { AmenitiesModule } from './amenities/amenities.module';
 import { MembershipCardModule } from './membership-card/membership-card.module';
 import { CardTncModule } from './card-tnc/card-tnc.module';
 import { CardAmenitiesModule } from './card-amenities/card-amenities.module';
@@ -75,7 +73,6 @@ import { NewsModule } from './news/news.module';
     PermissionsModule,
     UserPermissionsModule,
     UserDetailsModule,
-    CompanyDetailsModule,
     PagesModule,
     NodeMailerModule,
     StaffDetailsModule,
@@ -96,7 +93,6 @@ import { NewsModule } from './news/news.module';
     PaymentHistoryModule,
     NotifyModule,
     TaxModule,
-    AmenitiesModule,
     MembershipCardModule,
     CardTncModule,
     CardAmenitiesModule,

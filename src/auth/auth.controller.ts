@@ -43,12 +43,20 @@ export class AuthController {
   }
 
   @Post('business/login')
-  businessLogin(@Body() dto: BusinessLoginDto){
+  businessLogin(@Body() dto: BusinessLoginDto) {
     return this.authService.businessLogin(dto);
   }
 
+  @Post('business/verify')
+  businessVerifyOTP(@Body() dto: VerifyOtpDto) {
+    return this.authService.businessVerifyOTP(dto);
+  }
+
+  @Post('register/business')
+  registerBusiness() {}
+
   @Post('member/login')
-  memberLogin(@Body() dto: SigninDto){
+  memberLogin(@Body() dto: SigninDto) {
     return this.authService.memberLogin(dto);
   }
 

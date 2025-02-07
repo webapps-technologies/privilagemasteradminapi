@@ -35,7 +35,7 @@ export class CreateBusinessDto {
 
   @IsOptional()
   businessPhone: string;
-  
+
   @IsOptional()
   businessEmail: string;
 
@@ -140,4 +140,17 @@ export class BusinessPaginationDto {
 
   @IsOptional()
   toDate: string;
+}
+
+export class VerifyBusinessDto {
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  businessName: string;
+
+  @IsNotEmpty()
+  activationKey: string;
+
+  @IsNotEmpty()
+  licenceKey: string;
 }

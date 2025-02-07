@@ -30,13 +30,13 @@ export class MembershipCardService {
       .leftJoinAndSelect('membershipCard.cardGallery', 'cardGallery')
       .leftJoinAndSelect('membershipCard.cardTnc', 'cardTnc')
       .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
-      .leftJoinAndSelect('cardAmenities.amenities', 'amenities')
       .select([
         'membershipCard.id',
         'membershipCard.name',
         'membershipCard.validity',
         'membershipCard.price',
         'membershipCard.currencyType',
+        'membershipCard.cardType',
         'membershipCard.memberCount',
         'membershipCard.cardDesign',
         'membershipCard.status',
@@ -50,11 +50,10 @@ export class MembershipCardService {
         'cardTnc.terms',
 
         'cardAmenities.id',
-        'amenities.id',
-        'amenities.name',
-        'amenities.icon',
-        'amenities.desc',
-        'amenities.shortDesc',
+        'cardAmenities.name',
+        'cardAmenities.icon',
+        'cardAmenities.desc',
+        'cardAmenities.shortDesc',
       ])
       .where(
         'membershipCard.status = :status AND membershipCard.accountId = :accountId',
@@ -86,13 +85,13 @@ export class MembershipCardService {
       .leftJoinAndSelect('membershipCard.cardGallery', 'cardGallery')
       .leftJoinAndSelect('membershipCard.cardTnc', 'cardTnc')
       .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
-      .leftJoinAndSelect('cardAmenities.amenities', 'amenities')
       .select([
         'membershipCard.id',
         'membershipCard.name',
         'membershipCard.validity',
         'membershipCard.price',
         'membershipCard.currencyType',
+        'membershipCard.cardType',
         'membershipCard.memberCount',
         'membershipCard.cardDesign',
         'membershipCard.status',
@@ -106,11 +105,10 @@ export class MembershipCardService {
         'cardTnc.terms',
 
         'cardAmenities.id',
-        'amenities.id',
-        'amenities.name',
-        'amenities.icon',
-        'amenities.desc',
-        'amenities.shortDesc',
+        'cardAmenities.name',
+        'cardAmenities.icon',
+        'cardAmenities.desc',
+        'cardAmenities.shortDesc',
       ])
       .where(
         'membershipCard.status = :status AND membershipCard.accountId = :accountId',
@@ -129,13 +127,13 @@ export class MembershipCardService {
       .leftJoinAndSelect('membershipCard.cardGallery', 'cardGallery')
       .leftJoinAndSelect('membershipCard.cardTnc', 'cardTnc')
       .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
-      .leftJoinAndSelect('cardAmenities.amenities', 'amenities')
       .select([
         'membershipCard.id',
         'membershipCard.name',
         'membershipCard.validity',
         'membershipCard.price',
         'membershipCard.currencyType',
+        'membershipCard.cardType',
         'membershipCard.memberCount',
         'membershipCard.cardDesign',
         'membershipCard.status',
@@ -149,11 +147,10 @@ export class MembershipCardService {
         'cardTnc.terms',
 
         'cardAmenities.id',
-        'amenities.id',
-        'amenities.name',
-        'amenities.icon',
-        'amenities.desc',
-        'amenities.shortDesc',
+        'cardAmenities.name',
+        'cardAmenities.icon',
+        'cardAmenities.desc',
+        'cardAmenities.shortDesc',
       ])
       .where('membershipCard.status = :status AND membershipCard.id = :id', {
         status: DefaultStatus.ACTIVE,

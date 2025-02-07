@@ -13,7 +13,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
 import { Account } from 'src/account/entities/account.entity';
-import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import { DefaultStatus, LogType, LoginType, UserRole } from 'src/enum';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
@@ -135,14 +134,10 @@ export class AuthService {
   async businessLogin(dto: BusinessLoginDto) {
     const result = await this.repo
       .createQueryBuilder('account')
-      .where(
-        'account.email = :email AND account.roles = :roles AND account.status = :status',
-        {
-          email: dto.email,
-          roles: UserRole.BUSINESS,
-          status: DefaultStatus.ACTIVE,
-        },
-      )
+      .where('account.email = :email AND account.roles = :roles', {
+        email: dto.email,
+        roles: UserRole.BUSINESS,
+      })
       .getOne();
     if (!result) {
       throw new NotFoundException('EmailId not found! Please contact admin.');
@@ -151,9 +146,36 @@ export class AuthService {
     if (!comparePassword) {
       throw new UnauthorizedException('password mismatched!!');
     }
-    const token = await APIFeatures.assignJwtToken(result.id, this.jwtService);
+    const otp = 783200;
+    // const otp = Math.floor(100000 + Math.random() * 9000);
+    // this.nodeMailerService.sendOtpInEmail(dto.email, otp);
+    this.cacheManager.set(dto.email, otp, 10 * 60 * 1000);
 
-    return { token, business: { id: result.id, email: result.email } };
+    return 'OTP Sent in email!';
+
+    // const token = await APIFeatures.assignJwtToken(result.id, this.jwtService);
+    // return { token, business: { id: result.id, email: result.email } };
+  }
+
+  async businessVerifyOTP(dto: VerifyOtpDto) {
+    const business = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .where('account.email = :email AND account.roles = :roles', {
+        email: dto.email,
+        roles: UserRole.BUSINESS,
+      })
+      .getOne();
+    if (!business) {
+      throw new NotFoundException('Business account not found');
+    }
+    const storedOtp = await this.cacheManager.get<string>(dto.email);
+    if (!storedOtp || storedOtp !== dto.otp) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+    
+    const token = await APIFeatures.assignJwtToken( business.id, this.jwtService);
+    return { token, business: { id: business.id, email: business.email } };
   }
 
   async memberLogin(dto: SigninDto) {
@@ -194,7 +216,7 @@ export class AuthService {
     // }
     const token = await APIFeatures.assignJwtToken(user.id, this.jwtService);
 
-    const check = user.userDetail[0].membershipCardId;    
+    const check = user.userDetail[0].membershipCardId;
     if (check == null) {
       return {
         token,

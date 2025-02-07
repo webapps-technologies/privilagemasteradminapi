@@ -9,6 +9,7 @@ import { BoolStatusDto } from 'src/common/dto/bool-status.dto';
 import { Brackets, Repository } from 'typeorm';
 import { PaginationSDto, StateDto, StateUpdateDto } from './dto/state.dto';
 import { State } from './entities/state.entity';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 @Injectable()
 export class StateService {
@@ -37,6 +38,36 @@ export class StateService {
         countryId: dto.countryId,
       });
     }
+
+    const [result, total] = await query
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('state.name LIKE :pname', {
+            pname: '%' + keyword + '%',
+          });
+        }),
+      )
+      .orderBy(
+        `CASE WHEN state.name LIKE '${keyword}%' THEN 0 ELSE 1 END, state.name`,
+        'ASC',
+      )
+      .take(dto.limit)
+      .skip(dto.offset)
+      .getManyAndCount();
+
+    return { result, total };
+  }
+
+  async find(dto: CommonPaginationDto) {
+    const keyword = dto.keyword || '';
+    const query = await this.repo
+      .createQueryBuilder('state')
+      .where('state.status = :status', { status: true });
+    // if (dto.countryId && dto.countryId.length > 0) {
+    //   query.andWhere('state.countryId = :countryId', {
+    //     countryId: dto.countryId,
+    //   });
+    // }
 
     const [result, total] = await query
       .andWhere(

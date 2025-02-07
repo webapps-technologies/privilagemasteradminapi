@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   BusinessPaginationDto,
@@ -11,6 +12,7 @@ import {
   CreateBusinessDto,
   EmailVerifyDto,
   PhoneVerifyDto,
+  VerifyBusinessDto,
 } from './dto/create-business.dto';
 import { UpdateBusinessDto } from './dto/update-business.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,14 +22,17 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { NodeMailerService } from 'src/node-mailer/node-mailer.service';
 import { sendOtp } from 'src/utils/sms.utils';
-import { BusinessStatus } from 'src/enum';
+import { BusinessStatus, DefaultStatus } from 'src/enum';
 import { createObjectCsvStringifier } from 'csv-writer';
 import { Setting } from 'src/settings/entities/setting.entity';
+import { Licence } from 'src/licence/entities/licence.entity';
 
 @Injectable()
 export class BusinessService {
   constructor(
     @InjectRepository(Business) private readonly repo: Repository<Business>,
+    @InjectRepository(Licence)
+    private readonly licenceRepo: Repository<Licence>,
     @InjectRepository(Setting)
     private readonly settingRepo: Repository<Setting>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -82,7 +87,7 @@ export class BusinessService {
         dateFormat: 'd-m-y',
         timeFormat: '12hours',
         timeZone: 'Asia/Kolkata',
-        currency: 'INR'
+        currency: 'INR',
       });
       await this.settingRepo.save(settingObj);
       return business;
@@ -414,6 +419,35 @@ export class BusinessService {
       .offset(dto.offset)
       .getMany();
     return result;
+  }
+
+  async acitveBusiness(dto: VerifyBusinessDto, accountId: string) {
+    const business = await this.repo.findOne({ where: { accountId } });
+    if (!business) {
+      throw new NotFoundException('Business not found!');
+    }
+    if (business.businessName != dto.businessName) {
+      throw new NotFoundException('Please enter correct business name!');
+    }
+    const licence = await this.licenceRepo.findOne({
+      where: { businessId: business.id },
+    });
+    if (!licence) {
+      throw new NotFoundException('License not found for this business!');
+    }
+    if (
+      dto.activationKey == licence.activationKey &&
+      dto.licenceKey == licence.licenceKey
+    ) {
+      if (business.status == BusinessStatus.ACTIVE) {
+        return { message: 'You are already active' };
+      }
+      const obj = Object.assign(business, { status: BusinessStatus.ACTIVE });
+      await this.repo.save(obj);
+      return { message: 'Activation Successful!' };
+    } else {
+      throw new NotFoundException('Invalid activation or license key!');
+    }
   }
 
   async update(id: string, dto: UpdateBusinessDto) {

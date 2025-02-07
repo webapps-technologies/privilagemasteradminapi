@@ -16,6 +16,7 @@ import { BoolStatusDto } from 'src/common/dto/bool-status.dto';
 import { UserRole } from 'src/enum';
 import { CityService } from './city.service';
 import { CityDto, PaginationSDto, UpdateCityDto } from './dto/city.dto';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 
 @Controller('city')
 export class CityController {
@@ -33,6 +34,11 @@ export class CityController {
   @Roles(...Object.values(UserRole))
   findAll(@Query() dto: PaginationSDto) {
     return this.cityService.findAll(dto);
+  }
+
+  @Get('list')
+  find(@Query() dto: CommonPaginationDto) {
+    return this.cityService.find(dto);
   }
 
   @Patch(':id')

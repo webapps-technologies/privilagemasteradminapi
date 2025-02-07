@@ -34,6 +34,9 @@ export class MembershipCard {
   @Column({ type: 'varchar', length: 100, nullable: true })
   currencyType: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  cardType: string;
+
   @Column({ type: 'int', default: 0 })
   memberCount: number;
 

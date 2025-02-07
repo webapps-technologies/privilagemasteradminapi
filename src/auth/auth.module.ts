@@ -13,7 +13,6 @@ import { UserPermission } from 'src/user-permissions/entities/user-permission.en
 import { CaslAbilityFactory } from './factory/casl-ability.factory';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { CompanyDetail } from 'src/company-details/entities/company-detail.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { NodeMailerModule } from 'src/node-mailer/node-mailer.module';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
@@ -24,7 +23,6 @@ import { Business } from 'src/business/entities/business.entity';
     TypeOrmModule.forFeature([
       Account,
       UserPermission,
-      CompanyDetail,
       UserDetail,
       LoginHistory,
       Business

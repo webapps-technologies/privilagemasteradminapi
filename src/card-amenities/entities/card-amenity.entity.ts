@@ -1,4 +1,3 @@
-import { Amenity } from 'src/amenities/entities/amenity.entity';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 import {
   Column,
@@ -17,8 +16,26 @@ export class CardAmenity {
   @Column({ type: 'uuid', nullable: true })
   membershipCardId: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  amenitiesId: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  name: string;
+
+  @Column({ type: 'text', nullable: true })
+  icon: string;
+
+  @Column({ type: 'text', nullable: true })
+  iconPath: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  shortDesc: string;
+
+  @Column({ type: 'varchar', length: 5000, nullable: true })
+  desc: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(
     () => MembershipCard,
@@ -30,11 +47,4 @@ export class CardAmenity {
     },
   )
   membershipCard: MembershipCard[];
-
-  @ManyToOne(() => Amenity, (amenities) => amenities.cardAmenities, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  amenities: Amenity[];
 }
