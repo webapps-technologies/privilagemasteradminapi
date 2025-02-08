@@ -193,9 +193,9 @@ export class BusinessService {
     const result = await this.repo
       .createQueryBuilder('business')
       .leftJoinAndSelect('business.account', 'account')
-      .leftJoinAndSelect('business.licence', 'licence')
-      .leftJoinAndSelect('business.businessContract', 'businessContract')
+      .leftJoinAndSelect('account.businessContract', 'businessContract')
       .leftJoinAndSelect('businessContract.contract', 'contract')
+      .leftJoinAndSelect('business.licence', 'licence')
       .select([
         'business.id',
         'business.gender',
@@ -232,7 +232,16 @@ export class BusinessService {
         'account.email',
         'account.password',
         'account.roles',
-        'account.createdAt',
+        'account.createdAt',        
+
+        'businessContract.id',
+        'contract.id',
+        'contract.contractName',
+        'contract.contractTypeId',
+        'contract.validFrom',
+        'contract.validTill',
+        'contract.desc',
+        'contract.status',
 
         'licence.id',
         'licence.businessId',
@@ -244,15 +253,6 @@ export class BusinessService {
         'licence.amc',
         'licence.createdAt',
         'licence.status',
-
-        'businessContract.id',
-        'contract.id',
-        'contract.contractName',
-        'contract.contractTypeId',
-        'contract.validFrom',
-        'contract.validTill',
-        'contract.desc',
-        'contract.status',
       ])
       .where('business.id = :id', { id: id })
       .getOne();

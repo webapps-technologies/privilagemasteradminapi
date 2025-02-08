@@ -43,6 +43,7 @@ import { CardGalleryModule } from './card-gallery/card-gallery.module';
 import { ContactUsModule } from './contact-us/contact-us.module';
 import { OtherMembershipModule } from './other-membership/other-membership.module';
 import { NewsModule } from './news/news.module';
+import { UserChildModule } from './user-child/user-child.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { NewsModule } from './news/news.module';
     ContactUsModule,
     OtherMembershipModule,
     NewsModule,
+    UserChildModule,
   ],
   controllers: [AppController],
   providers: [AppService],

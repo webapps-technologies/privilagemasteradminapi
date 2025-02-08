@@ -1,3 +1,4 @@
+import { Account } from 'src/account/entities/account.entity';
 import { Business } from 'src/business/entities/business.entity';
 import { Contract } from 'src/contract/entities/contract.entity';
 import {
@@ -15,7 +16,7 @@ export class BusinessContract {
   id: string;
 
   @Column({ type: 'uuid', nullable: true })
-  businessId: string;
+  accountId: string;
 
   @Column({ type: 'uuid', nullable: true })
   contractId: string;
@@ -26,12 +27,12 @@ export class BusinessContract {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Business, (business) => business.businessContract, {
+  @ManyToOne(() => Account, (account) => account.businessContract, {
     cascade: true,
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  business: Business[];
+  account: Account[];
 
   @ManyToOne(() => Contract, (contract) => contract.businessContract, {
     cascade: true,

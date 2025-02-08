@@ -183,8 +183,7 @@ export class MemberPaginationDto {
   @MaxLength(100)
   keyword: string;
 
-  @IsNotEmpty()
-  @IsEnum(DefaultStatus)
+  @IsOptional()
   status: DefaultStatus;
 
   @IsOptional()

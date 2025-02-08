@@ -142,10 +142,4 @@ export class Business {
 
   @OneToMany(() => Licence, (licence) => licence.business)
   licence: Licence[];
-
-  @OneToMany(
-    () => BusinessContract,
-    (businessContract) => businessContract.business,
-  )
-  businessContract: BusinessContract[];
 }

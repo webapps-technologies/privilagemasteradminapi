@@ -17,7 +17,9 @@ export class CardAmenitiesService {
   ) {}
 
   async create(dto: CreateCardAmenityDto) {
-    const result = await this.repo.findOne({ where: { name: dto.name } });
+    const result = await this.repo.findOne({
+      where: { name: dto.name, membershipCardId: dto.membershipCardId },
+    });
     if (result) {
       throw new ConflictException('Amenities already exists!');
     }

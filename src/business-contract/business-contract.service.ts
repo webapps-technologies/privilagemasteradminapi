@@ -15,7 +15,7 @@ export class BusinessContractService {
   async create(dto: CreateBusinessContractDto) {
     const promise = dto.contractId.map(async (item) => {
       const obj = Object.assign({
-        businessId: dto.businessId,
+        accountId: dto.accountId,
         contractId: item,
       });
       return this.repo.save(obj);

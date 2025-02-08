@@ -139,7 +139,7 @@ export class AccountService {
         'account.id',
         'account.phoneNumber',
         'account.roles',
-        'account.status',
+        // 'account.status',
         'account.createdAt',
 
         'userDetail.id',
@@ -182,7 +182,8 @@ export class AccountService {
         'membershipCard.price',
         'membershipCard.currencyType',
         'membershipCard.memberCount',
-      ]);
+      ])
+      .where('account.roles = :roles', { roles: UserRole.USER });
     if (dto.status && dto.status.length > 0) {
       query.andWhere('userDetail.status = :status', {
         status: dto.status,
@@ -238,6 +239,7 @@ export class AccountService {
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.userDetail', 'userDetail')
       .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
       .select([
         'account.id',
         'account.phoneNumber',
@@ -286,6 +288,12 @@ export class AccountService {
         'membershipCard.currencyType',
         'membershipCard.memberCount',
         'membershipCard.cardDesign',
+
+        'cardAmenities.id',
+        'cardAmenities.name',
+        'cardAmenities.icon',
+        'cardAmenities.desc',
+        'cardAmenities.shortDesc',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();
@@ -443,59 +451,59 @@ export class AccountService {
 
   async userDetailQRCode(accountId: string) {
     const userProfile = await this.repo
-    .createQueryBuilder('account')
-    .leftJoinAndSelect('account.userDetail', 'userDetail')
-    .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
-    .select([
-      'account.id',
-      'account.phoneNumber',
-      'account.roles',
-      'account.createdAt',
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+        'account.createdAt',
 
-      'userDetail.id',
-      'userDetail.memberId',
-      'userDetail.membershipValidFrom',
-      'userDetail.membershipValidTo',
-      'userDetail.fName',
-      'userDetail.mName',
-      'userDetail.lName',
-      'userDetail.email',
-      'userDetail.gender',
-      'userDetail.profile',
-      'userDetail.address1',
-      'userDetail.address2',
-      'userDetail.city',
-      'userDetail.state',
-      'userDetail.zipcode',
-      'userDetail.businessType',
-      'userDetail.businessName',
-      'userDetail.memberDoc',
-      'userDetail.gstNumber',
-      'userDetail.businessDoc',
-      'userDetail.businessCity',
-      'userDetail.businessState',
-      'userDetail.businessZipcode',
-      'userDetail.businessPhone',
-      'userDetail.cardNumber',
-      'userDetail.landMark',
-      'userDetail.fatherName',
-      'userDetail.dob',
-      'userDetail.qualification',
-      'userDetail.profession',
-      'userDetail.panNumber',
-      'userDetail.income',
-      'userDetail.status',
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.fName',
+        'userDetail.mName',
+        'userDetail.lName',
+        'userDetail.email',
+        'userDetail.gender',
+        'userDetail.profile',
+        'userDetail.address1',
+        'userDetail.address2',
+        'userDetail.city',
+        'userDetail.state',
+        'userDetail.zipcode',
+        'userDetail.businessType',
+        'userDetail.businessName',
+        'userDetail.memberDoc',
+        'userDetail.gstNumber',
+        'userDetail.businessDoc',
+        'userDetail.businessCity',
+        'userDetail.businessState',
+        'userDetail.businessZipcode',
+        'userDetail.businessPhone',
+        'userDetail.cardNumber',
+        'userDetail.landMark',
+        'userDetail.fatherName',
+        'userDetail.dob',
+        'userDetail.qualification',
+        'userDetail.profession',
+        'userDetail.panNumber',
+        'userDetail.income',
+        'userDetail.status',
 
-      'membershipCard.id',
-      'membershipCard.name',
-      'membershipCard.validity',
-      'membershipCard.price',
-      'membershipCard.currencyType',
-      'membershipCard.memberCount',
-      'membershipCard.cardDesign',
-    ])
-    .where('account.id = :id', { id: accountId })
-    .getOne();
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+        'membershipCard.cardDesign',
+      ])
+      .where('account.id = :id', { id: accountId })
+      .getOne();
     if (!userProfile) {
       throw new Error('User not found');
     }

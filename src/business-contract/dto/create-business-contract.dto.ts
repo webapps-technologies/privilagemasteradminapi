@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateBusinessContractDto {
   @IsNotEmpty()
-  businessId: string;
+  accountId: string;
 
   @IsNotEmpty()
   // contractId: string;

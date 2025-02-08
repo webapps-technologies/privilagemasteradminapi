@@ -1,4 +1,5 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
+import { BusinessContract } from 'src/business-contract/entities/business-contract.entity';
 import { Business } from 'src/business/entities/business.entity';
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
@@ -97,4 +98,10 @@ export class Account {
 
   @OneToMany(() => News, (news) => news.account)
   news: News[];
+
+  @OneToMany(
+    () => BusinessContract,
+    (businessContract) => businessContract.account,
+  )
+  businessContract: BusinessContract[];
 }
