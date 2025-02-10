@@ -1,16 +1,27 @@
-import { IsNotEmpty } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserChildDto {
   @IsNotEmpty()
-  userDetailId: string;
+  accountId: string;
 
   @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
   name: string;
 
   @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
   email: string;
 
   @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(10)
   phoneNumber: string;
 
   @IsNotEmpty()
@@ -18,4 +29,7 @@ export class CreateUserChildDto {
 
   @IsNotEmpty()
   martialStatus: string;
+
+  @IsOptional()
+  memberId: string;
 }

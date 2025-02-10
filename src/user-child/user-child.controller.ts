@@ -7,6 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserChildService } from './user-child.service';
 import { CreateUserChildDto } from './dto/create-user-child.dto';
@@ -15,6 +21,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Account } from 'src/account/entities/account.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('user-child')
 export class UserChildController {
@@ -24,29 +35,45 @@ export class UserChildController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.BUSINESS)
   create(@Body() dto: CreateUserChildDto) {
+    const memberId = `CHD-MEM-${Math.floor(1000 + Math.random() * 9000)}`;
+    dto.memberId = memberId;
     return this.userChildService.create(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.userChildService.findAll();
+  @Patch('update/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  update(@Param('id') id: string, @Body() dto: UpdateUserChildDto) {
+    return this.userChildService.update(id, dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userChildService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
+  @Put('profileImage/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserChild/profile',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async profileImage(
     @Param('id') id: string,
-    @Body() updateUserChildDto: UpdateUserChildDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 })],
+      }),
+    )
+    file: Express.Multer.File,
   ) {
-    return this.userChildService.update(id, updateUserChildDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userChildService.remove(id);
+    const fileData = await this.userChildService.findOne(id);
+    return this.userChildService.profileImage(file.path, fileData);
   }
 }

@@ -1,3 +1,4 @@
+import { Account } from 'src/account/entities/account.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import {
   Column,
@@ -14,7 +15,10 @@ export class UserChild {
   id: string;
 
   @Column({ type: 'uuid', nullable: true })
-  userDetailId: string;
+  accountId: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  memberId: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   name: string;
@@ -43,10 +47,10 @@ export class UserChild {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => UserDetail, (userDetail) => userDetail.userChild, {
+  @ManyToOne(() => Account, (account) => account.userChild, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  userDetail: UserDetail[];
+  account: Account[];
 }

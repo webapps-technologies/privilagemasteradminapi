@@ -13,6 +13,8 @@ import {
   CreateAccountDto,
   EmailUpdateDto,
   MemberPaginationDto,
+  PaginationChildDto,
+  SearchMemberPaginationDto,
   UpdateStaffDto,
   UpdateStaffPasswordDto,
 } from './dto/account.dto';
@@ -240,6 +242,7 @@ export class AccountService {
       .leftJoinAndSelect('account.userDetail', 'userDetail')
       .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
       .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
+      .leftJoinAndSelect('account.userChild', 'userChild')
       .select([
         'account.id',
         'account.phoneNumber',
@@ -294,10 +297,216 @@ export class AccountService {
         'cardAmenities.icon',
         'cardAmenities.desc',
         'cardAmenities.shortDesc',
+
+        'userChild.id',
+        'userChild.memberId',
+        'userChild.name',
+        'userChild.email',
+        'userChild.phoneNumber',
+        'userChild.relation',
+        'userChild.martialStatus',
+        'userChild.profile',
+        'userChild.createAt',
+        'userChild.updatedAt',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();
     return result;
+  }
+
+  async findBySearch(dto: SearchMemberPaginationDto) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
+      .leftJoinAndSelect('account.userChild', 'userChild')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+        'account.status',
+        'account.createdAt',
+
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.fName',
+        'userDetail.mName',
+        'userDetail.lName',
+        'userDetail.email',
+        'userDetail.gender',
+        'userDetail.profile',
+        'userDetail.address1',
+        'userDetail.address2',
+        'userDetail.city',
+        'userDetail.state',
+        'userDetail.zipcode',
+        'userDetail.memberDoc',
+        'userDetail.businessType',
+        'userDetail.businessName',
+        'userDetail.gstNumber',
+        'userDetail.businessDoc',
+        'userDetail.businessCity',
+        'userDetail.businessState',
+        'userDetail.businessZipcode',
+        'userDetail.businessPhone',
+        'userDetail.cardNumber',
+        'userDetail.landMark',
+        'userDetail.fatherName',
+        'userDetail.dob',
+        'userDetail.qualification',
+        'userDetail.profession',
+        'userDetail.panNumber',
+        'userDetail.income',
+        'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+        'membershipCard.cardDesign',
+
+        'cardAmenities.id',
+        'cardAmenities.name',
+        'cardAmenities.icon',
+        'cardAmenities.desc',
+        'cardAmenities.shortDesc',
+
+        'userChild.id',
+        'userChild.memberId',
+        'userChild.name',
+        'userChild.email',
+        'userChild.phoneNumber',
+        'userChild.relation',
+        'userChild.martialStatus',
+        'userChild.profile',
+        'userChild.createAt',
+        'userChild.updatedAt',
+      ])
+      .where(
+        'account.phoneNumber = :phoneNumber OR userChild.phoneNumber = :uPhoneNumber OR userDetail.memberId = :memberId',
+        {
+          phoneNumber: dto.phoneNumber,
+          uPhoneNumber: dto.phoneNumber,
+          memberId: dto.memberId,
+        },
+      )
+      .getOne();
+    return result;
+  }
+
+  async findChildList(dto: PaginationChildDto) {
+    const keyword = dto.keyword || '';
+    const startDate = new Date(dto.startDate);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(dto.endDate);
+    endDate.setHours(23, 59, 59, 999);
+
+    const query = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .leftJoinAndSelect('account.userChild', 'userChild')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+        // 'account.status',
+        'account.createdAt',
+
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.fName',
+        'userDetail.mName',
+        'userDetail.lName',
+        'userDetail.email',
+        'userDetail.gender',
+        'userDetail.profile',
+        'userDetail.address1',
+        'userDetail.address2',
+        'userDetail.city',
+        'userDetail.state',
+        'userDetail.zipcode',
+        'userDetail.memberDoc',
+        'userDetail.businessType',
+        'userDetail.businessName',
+        'userDetail.gstNumber',
+        'userDetail.businessDoc',
+        'userDetail.businessCity',
+        'userDetail.businessState',
+        'userDetail.businessZipcode',
+        'userDetail.businessPhone',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.cardNumber',
+        'userDetail.landMark',
+        'userDetail.fatherName',
+        'userDetail.dob',
+        'userDetail.qualification',
+        'userDetail.profession',
+        'userDetail.panNumber',
+        'userDetail.income',
+        'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.memberCount',
+
+        'userChild.id',
+        'userChild.memberId',
+        'userChild.name',
+        'userChild.email',
+        'userChild.phoneNumber',
+        'userChild.relation',
+        'userChild.martialStatus',
+        'userChild.profile',
+        'userChild.createAt',
+        'userChild.updatedAt',
+      ])
+      .where('account.roles = :roles', { roles: UserRole.USER });
+    if (dto.status && dto.status.length > 0) {
+      query.andWhere('userDetail.status = :status', {
+        status: dto.status,
+      });
+    }
+    if (dto.phoneNumber && dto.phoneNumber.length > 0) {
+      query.andWhere('userChild.phoneNumber = :phoneNumber', {
+        phoneNumber: dto.phoneNumber,
+      });
+    }
+    if (dto.membershipType && dto.membershipType.length > 0) {
+      query.andWhere('membershipCard.name = :name', {
+        name: dto.membershipType,
+      });
+    }
+    if (dto.memberId && dto.memberId.length > 0) {
+      query.andWhere('userChild.memberId = :memberId', {
+        memberId: dto.memberId,
+      });
+    }
+    // if (dto.startDate && dto.endDate) {
+    //   query.andWhere(
+    //     'userDetail.membershipValidFrom >= :startDate AND userDetail.membershipValidTo <= :endDate',
+    //     {
+    //       startDate: startDate,
+    //       endDate: endDate,
+    //     },
+    //   );
+    // }
+    const [result, total] = await query
+      .orderBy({ 'account.createdAt': 'DESC' })
+      .take(dto.limit)
+      .skip(dto.offset)
+      .getManyAndCount();
+
+    return { result, total };
   }
 
   async adminProfile(accountId: string) {
@@ -454,6 +663,7 @@ export class AccountService {
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.userDetail', 'userDetail')
       .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .leftJoinAndSelect('account.userChild', 'userChild')
       .select([
         'account.id',
         'account.phoneNumber',
@@ -501,6 +711,17 @@ export class AccountService {
         'membershipCard.currencyType',
         'membershipCard.memberCount',
         'membershipCard.cardDesign',
+
+        'userChild.id',
+        'userChild.memberId',
+        'userChild.name',
+        'userChild.email',
+        'userChild.phoneNumber',
+        'userChild.relation',
+        'userChild.martialStatus',
+        'userChild.profile',
+        'userChild.createAt',
+        'userChild.updatedAt',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();

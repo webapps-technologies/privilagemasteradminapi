@@ -1,13 +1,11 @@
 import { Account } from 'src/account/entities/account.entity';
 import { DefaultStatus, Gender } from 'src/enum';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
-import { UserChild } from 'src/user-child/entities/user-child.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -151,7 +149,4 @@ export class UserDetail {
     },
   )
   membershipCard: MembershipCard[];
-
-  @OneToMany(() => UserChild, (userChild) => userChild.userDetail)
-  userChild: UserChild[];
 }

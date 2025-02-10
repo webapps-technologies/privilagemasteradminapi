@@ -201,3 +201,50 @@ export class MemberPaginationDto {
   @IsOptional()
   endDate: string;
 }
+
+export class PaginationChildDto {
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(10)
+  @Max(100)
+  limit: number;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  offset: number;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(0)
+  @MaxLength(100)
+  keyword: string;
+
+  @IsOptional()
+  status: DefaultStatus;
+
+  @IsOptional()
+  phoneNumber: string;
+
+  @IsOptional()
+  membershipType: string;
+
+  @IsOptional()
+  memberId: string;
+
+  @IsOptional()
+  startDate: string;
+
+  @IsOptional()
+  endDate: string;
+}
+
+export class SearchMemberPaginationDto {
+  @IsOptional()
+  memberId: string;
+
+  @IsOptional()
+  phoneNumber: string;
+}

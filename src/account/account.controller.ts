@@ -26,6 +26,8 @@ import {
   CreateAccountDto,
   EmailUpdateDto,
   MemberPaginationDto,
+  PaginationChildDto,
+  SearchMemberPaginationDto,
   UpdateStaffDto,
   UpdateStaffPasswordDto,
 } from './dto/account.dto';
@@ -105,6 +107,20 @@ export class AccountController {
   @Roles(UserRole.BUSINESS)
   async findOneMember(@Param('accountId') accountId: string) {
     return this.accountService.findOneMember(accountId);
+  }
+
+  @Get('member/search')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async findBySearch(@Query() dto: SearchMemberPaginationDto) {
+    return this.accountService.findBySearch(dto);
+  }
+
+  @Get('child/list')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async findChildList(@Query() dto: PaginationChildDto) {
+    return this.accountService.findChildList(dto)
   }
 
   @Get('admin/profile')

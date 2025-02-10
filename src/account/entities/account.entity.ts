@@ -11,6 +11,7 @@ import { PaymentHistory } from 'src/payment-history/entities/payment-history.ent
 import { Setting } from 'src/settings/entities/setting.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { Tax } from 'src/tax/entities/tax.entity';
+import { UserChild } from 'src/user-child/entities/user-child.entity';
 import { UserDetail } from 'src/user-details/entities/user-detail.entity';
 import { UserPermission } from 'src/user-permissions/entities/user-permission.entity';
 import {
@@ -104,4 +105,7 @@ export class Account {
     (businessContract) => businessContract.account,
   )
   businessContract: BusinessContract[];
+
+  @OneToMany(() => UserChild, (userChild) => userChild.account)
+  userChild: UserChild[];
 }

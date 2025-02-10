@@ -53,6 +53,7 @@ export class UserDetailsController {
 
   @Put('profileImage')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
