@@ -105,6 +105,9 @@ export class UserDetail {
   @Column({ type: 'varchar', length: 100, nullable: true })
   businessPhone: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  businessLandmark: string;
+
   @Column({ type: 'date', nullable: true })
   membershipValidFrom: Date;
 

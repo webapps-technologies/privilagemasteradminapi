@@ -138,6 +138,9 @@ export class UpdateUserDetailDto {
   businessPhone: string;
 
   @IsOptional()
+  businessLandmark: string;
+
+  @IsOptional()
   accountId: string;
 }
 

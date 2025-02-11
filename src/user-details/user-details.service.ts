@@ -67,6 +67,7 @@ export class UserDetailsService {
       businessZipcode: dto.businessZipcode,
       businessPhone: dto.businessPhone,
       landMark: dto.landMark,
+      businessLandmark: dto.businessLandmark,
       fatherName: dto.fatherName,
       dob: dto.dob,
       qualification: dto.qualification,

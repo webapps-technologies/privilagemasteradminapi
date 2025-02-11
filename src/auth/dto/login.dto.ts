@@ -98,3 +98,21 @@ export class BusinessLoginDto {
   @MinLength(8)
   password: string;
 }
+
+export class BusinessForgotDto{
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  email: string;
+}
+
+export class BusinessResetDto{
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(8)
+  newPassword: string;
+}

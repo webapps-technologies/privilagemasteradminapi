@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Ip, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   AdminSigninDto,
   BusinessCreateDto,
+  BusinessForgotDto,
   BusinessLoginDto,
+  BusinessResetDto,
   ForgotPassDto,
   OtpDto,
   SigninDto,
@@ -50,6 +52,21 @@ export class AuthController {
   @Post('business/verify')
   businessVerifyOTP(@Body() dto: VerifyOtpDto) {
     return this.authService.businessVerifyOTP(dto);
+  }
+
+  @Post('business/forgot')
+  businessforgotPass(@Body() dto: BusinessForgotDto){
+    return this.authService.businessforgotPass(dto);
+  }
+
+  @Post('business/otpcheck')
+  businessOtpCheck(@Body() dto: VerifyOtpDto) {
+    return this.authService.businessOtpCheck(dto.email, dto.otp);
+  }
+
+  @Post('business/resetPass')
+  businessResetPass(@Body() dto: BusinessResetDto) {
+    return this.authService.businessResetPass(dto);
   }
 
   @Post('register/business')

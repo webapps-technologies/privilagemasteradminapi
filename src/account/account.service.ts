@@ -509,6 +509,97 @@ export class AccountService {
     return { result, total };
   }
 
+  async businessProfile(accountId: string) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .leftJoinAndSelect('business.licence', 'licence')
+      .leftJoinAndSelect('account.setting', 'setting')
+      .leftJoinAndSelect('account.tax', 'tax')
+      .leftJoinAndSelect('account.membershipCard', 'membershipCard')
+      .select([
+        'account.id',
+        'account.email',
+        'account.phoneNumber',
+        'account.roles',
+        'account.createdAt',
+
+        'business.id',
+        'business.gender',
+        'business.personName',
+        'business.personEmail',
+        'business.personPhone',
+        'business.businessKey',
+        'business.businessType',
+        'business.businessName',
+        'business.parentCompanyName',
+        'business.businessPhone',
+        'business.businessEmail',
+        'business.gstNo',
+        'business.address1',
+        'business.address2',
+        'business.zipCode',
+        'business.city',
+        'business.state',
+        'business.country',
+        'business.signatory',
+        'business.logo',
+        'business.brandLogo',
+        'business.doc1',
+        'business.doc2',
+        'business.gstCertificate',
+        'business.workOrder',
+        'business.status',
+        'business.accountId',
+        'business.createdAt',
+        'business.updatedAt',
+
+        'licence.id',
+        'licence.businessId',
+        'licence.userLimit',
+        'licence.licenceKey',
+        'licence.activationKey',
+        'licence.startDate',
+        'licence.renewalDate',
+        'licence.amc',
+        'licence.createdAt',
+        'licence.status',
+
+        'setting.id',
+        'setting.title',
+        'setting.user_domain',
+        'setting.admin_domain',
+        'setting.mobile_domain',
+        'setting.dateFormat',
+        'setting.timeFormat',
+        'setting.timeZone',
+        'setting.currency',
+        'setting.createdAt',
+
+        'tax.id',
+        'tax.taxName',
+        'tax.rate',
+        'tax.status',
+        'tax.createdAt',
+        'tax.updatedAt',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.validity',
+        'membershipCard.price',
+        'membershipCard.currencyType',
+        'membershipCard.cardType',
+        'membershipCard.desc',
+        'membershipCard.memberCount',
+        'membershipCard.status',
+        'membershipCard.cardDesign',
+        'membershipCard.createdAt',
+      ])
+      .where('account.id = :id', { id: accountId })
+      .getOne();
+    return result;
+  }
+
   async adminProfile(accountId: string) {
     const result = await this.repo
       .createQueryBuilder('account')

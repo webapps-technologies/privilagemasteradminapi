@@ -123,6 +123,13 @@ export class AccountController {
     return this.accountService.findChildList(dto)
   }
 
+  @Get('business/profile')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async businessProfile(@CurrentUser() user: Account) {
+    return this.accountService.businessProfile(user.id);
+  }
+
   @Get('admin/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)

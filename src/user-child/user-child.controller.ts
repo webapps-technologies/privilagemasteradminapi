@@ -21,11 +21,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRole } from 'src/enum';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { Account } from 'src/account/entities/account.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Account } from 'src/account/entities/account.entity';
 
 @Controller('user-child')
 export class UserChildController {

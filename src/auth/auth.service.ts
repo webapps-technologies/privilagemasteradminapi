@@ -21,7 +21,9 @@ import { Repository } from 'typeorm';
 import {
   AdminSigninDto,
   BusinessCreateDto,
+  BusinessForgotDto,
   BusinessLoginDto,
+  BusinessResetDto,
   ForgotPassDto,
   OtpDto,
   SigninDto,
@@ -152,9 +154,6 @@ export class AuthService {
     this.cacheManager.set(dto.email, otp, 10 * 60 * 1000);
 
     return 'OTP Sent in email!';
-
-    // const token = await APIFeatures.assignJwtToken(result.id, this.jwtService);
-    // return { token, business: { id: result.id, email: result.email } };
   }
 
   async businessVerifyOTP(dto: VerifyOtpDto) {
@@ -173,9 +172,56 @@ export class AuthService {
     if (!storedOtp || storedOtp !== dto.otp) {
       throw new BadRequestException('Invalid or expired OTP');
     }
-    
-    const token = await APIFeatures.assignJwtToken( business.id, this.jwtService);
+
+    const token = await APIFeatures.assignJwtToken(
+      business.id,
+      this.jwtService,
+    );
     return { token, business: { id: business.id, email: business.email } };
+  }
+
+  async businessforgotPass(dto: BusinessForgotDto) {
+    const result = await this.repo.findOne({
+      where: { email: dto.email, roles: UserRole.BUSINESS },
+    });
+    if (!result) {
+      throw new NotFoundException('Account not found!');
+    }
+    const otp = 783200;
+    // const otp = Math.floor(100000 + Math.random() * 9000);
+    // this.nodeMailerService.sendOtpInEmail(dto.email, otp);
+    this.cacheManager.set(dto.email, otp, 10 * 60 * 1000);
+
+    return 'OTP Sent in email!';
+  }
+
+  async businessOtpCheck(email: string, otp: string) {
+    const storedOtp = await this.cacheManager.get<string>(email);
+    if (storedOtp !== otp) {
+      throw new BadRequestException('Invalid or expired OTP');
+    }
+    return { message: 'OTP Macthed.' };
+  }
+
+  async businessResetPass(dto: BusinessResetDto) {
+    const business = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .where('account.email = :email AND account.roles = :roles', {
+        email: dto.email,
+        roles: UserRole.BUSINESS,
+      })
+      .getOne();
+    if (!business) {
+      throw new NotFoundException('Business account not found');
+    }
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+    business.password = hashedPassword;
+
+    await this.repo.save(business);
+    await this.cacheManager.del(dto.email);
+
+    return { message: 'Password reset successfully' };
   }
 
   async memberLogin(dto: SigninDto) {
