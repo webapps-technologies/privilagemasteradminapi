@@ -15,7 +15,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserChildService } from './user-child.service';
-import { CreateUserChildDto } from './dto/create-user-child.dto';
+import {
+  CreateByUserChildDto,
+  CreateUserChildDto,
+} from './dto/create-user-child.dto';
 import { UpdateUserChildDto } from './dto/update-user-child.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
@@ -38,6 +41,16 @@ export class UserChildController {
     const memberId = `CHD-MEM-${Math.floor(1000 + Math.random() * 9000)}`;
     dto.memberId = memberId;
     return this.userChildService.create(dto);
+  }
+
+  @Post('add-child')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
+  addChild(@Body() dto: CreateByUserChildDto, @CurrentUser() user: Account) {
+    const memberId = `CHD-MEM-${Math.floor(1000 + Math.random() * 9000)}`;
+    dto.memberId = memberId;
+    dto.accountId = user.id;
+    return this.userChildService.addChild(dto);
   }
 
   @Patch('update/:id')

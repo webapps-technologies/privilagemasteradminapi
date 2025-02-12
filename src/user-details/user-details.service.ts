@@ -66,6 +66,7 @@ export class UserDetailsService {
       businessState: dto.businessState,
       businessZipcode: dto.businessZipcode,
       businessPhone: dto.businessPhone,
+      businessEmail: dto.businessEmail,
       landMark: dto.landMark,
       businessLandmark: dto.businessLandmark,
       fatherName: dto.fatherName,

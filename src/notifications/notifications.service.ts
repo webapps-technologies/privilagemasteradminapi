@@ -71,7 +71,6 @@ export class NotificationsService {
     const [result, total] = await this.repo
       .createQueryBuilder('notification')
       .leftJoinAndSelect('notification.account', 'account')
-      .leftJoinAndSelect('account.companyDetail', 'companyDetail')
       .where(
         'notification.accountId = :accountId OR notification.accountId IS NULL',
         {

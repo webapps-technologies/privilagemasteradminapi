@@ -103,6 +103,9 @@ export class UserDetail {
   businessZipcode: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
+  businessEmail: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
   businessPhone: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })

@@ -141,6 +141,9 @@ export class UpdateUserDetailDto {
   businessLandmark: string;
 
   @IsOptional()
+  businessEmail: string;
+
+  @IsOptional()
   accountId: string;
 }
 

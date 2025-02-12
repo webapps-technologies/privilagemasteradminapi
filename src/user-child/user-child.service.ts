@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserChildDto } from './dto/create-user-child.dto';
+import { CreateByUserChildDto, CreateUserChildDto } from './dto/create-user-child.dto';
 import { UpdateUserChildDto } from './dto/update-user-child.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserChild } from './entities/user-child.entity';
@@ -23,7 +23,41 @@ export class UserChildService {
   ) {}
 
   async create(dto: CreateUserChildDto) {
-    //check memberCount of membershipCard if exceed then show error msg.
+    const user = await this.udRepo.findOne({
+      where: { accountId: dto.accountId },
+    });
+    if (!user) {
+      throw new NotFoundException('User Not Found!');
+    }
+    const card = await this.memCardRepo.findOne({
+      where: { id: user.membershipCardId },
+    });
+    if (!card) {
+      throw new NotFoundException('MembershipCard Not found');
+    }
+    const memberCount = card.memberCount;
+    const childCount = await this.repo.count({
+      where: { accountId: dto.accountId },
+    });
+    if (childCount == memberCount) {
+      throw new ConflictException('Cannot add child member, limit exceeded!');
+    }
+    if (user.status != DefaultStatus.ACTIVE) {
+      throw new ConflictException('Member is not acitve');
+    }
+    const child = await this.repo.findOne({
+      where: { accountId: dto.accountId, name: dto.name },
+    });
+    if (child) {
+      throw new ConflictException(
+        'Child Member already exists with this name!',
+      );
+    }
+    const obj = Object.assign(dto);
+    return this.repo.save(obj);
+  }
+
+  async addChild(dto: CreateByUserChildDto) {
     const user = await this.udRepo.findOne({
       where: { accountId: dto.accountId },
     });

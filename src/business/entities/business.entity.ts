@@ -3,6 +3,7 @@ import { BusinessContract } from 'src/business-contract/entities/business-contra
 import { BusinessStatus, Gender, YNStatus } from 'src/enum';
 import { Licence } from 'src/licence/entities/licence.entity';
 import { Plan } from 'src/plan/entities/plan.entity';
+import { RatingFeedback } from 'src/rating-feedback/entities/rating-feedback.entity';
 import {
   Column,
   CreateDateColumn,
@@ -142,4 +143,7 @@ export class Business {
 
   @OneToMany(() => Licence, (licence) => licence.business)
   licence: Licence[];
+
+  @OneToMany(() => RatingFeedback, (ratingFeedback) => ratingFeedback.business)
+  ratingFeedback: RatingFeedback[];
 }

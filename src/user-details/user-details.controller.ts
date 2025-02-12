@@ -72,7 +72,7 @@ export class UserDetailsController {
     @CurrentUser() user: Account,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 })],
+        // validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 })],
       }),
     )
     file: Express.Multer.File,
@@ -103,8 +103,8 @@ export class UserDetailsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+          // new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          // new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
         ],
       }),
     )
@@ -169,8 +169,8 @@ export class UserDetailsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+          // new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          // new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
         ],
       }),
     )

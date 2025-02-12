@@ -44,6 +44,7 @@ import { ContactUsModule } from './contact-us/contact-us.module';
 import { OtherMembershipModule } from './other-membership/other-membership.module';
 import { NewsModule } from './news/news.module';
 import { UserChildModule } from './user-child/user-child.module';
+import { RatingFeedbackModule } from './rating-feedback/rating-feedback.module';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { UserChildModule } from './user-child/user-child.module';
     OtherMembershipModule,
     NewsModule,
     UserChildModule,
+    RatingFeedbackModule
   ],
   controllers: [AppController],
   providers: [AppService],

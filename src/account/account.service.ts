@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DefaultStatus, UserRole } from 'src/enum';
@@ -600,6 +601,67 @@ export class AccountService {
     return result;
   }
 
+  async generateBusinessQR(accountId: string) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .leftJoinAndSelect(
+        'account.membershipCard',
+        'membershipCard',
+        'membershipCard.status = :status',
+        {
+          status: DefaultStatus.ACTIVE,
+        },
+      )
+      .select([
+        'account.id',
+
+        'business.businessName',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.status',
+      ])
+      .where('account.id = :id', { id: accountId })
+      .getOne();
+    // return result;
+    const qrCode = await generateQrCode(result);
+    return { qrCode: qrCode };
+  }
+
+  async verifyUserByQR(accountId: string) {
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+      ])
+      .where('account.id = :id', { id: accountId })
+      .getOne();
+
+    if (result.userDetail[0].status == DefaultStatus.ACTIVE) {
+      const userCardId = result.userDetail[0].membershipCard['id'];
+      //find the membershipCardId in hotel's membershipCard array if found return true;
+
+    } else {
+      throw new UnauthorizedException(
+        `Your account is ${result.userDetail[0].status}! Please renew!`,
+      );
+    }
+  }
+
   async adminProfile(accountId: string) {
     const result = await this.repo
       .createQueryBuilder('account')
@@ -726,8 +788,10 @@ export class AccountService {
         'userDetail.businessState',
         'userDetail.businessZipcode',
         'userDetail.businessPhone',
+        'userDetail.businessEmail',
         'userDetail.cardNumber',
         'userDetail.landMark',
+        'userDetail.businessLandmark',
         'userDetail.fatherName',
         'userDetail.dob',
         'userDetail.qualification',

@@ -8,6 +8,7 @@ import { News } from 'src/news/entities/news.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { OtherMembership } from 'src/other-membership/entities/other-membership.entity';
 import { PaymentHistory } from 'src/payment-history/entities/payment-history.entity';
+import { RatingFeedback } from 'src/rating-feedback/entities/rating-feedback.entity';
 import { Setting } from 'src/settings/entities/setting.entity';
 import { StaffDetail } from 'src/staff-details/entities/staff-detail.entity';
 import { Tax } from 'src/tax/entities/tax.entity';
@@ -108,4 +109,7 @@ export class Account {
 
   @OneToMany(() => UserChild, (userChild) => userChild.account)
   userChild: UserChild[];
+
+  @OneToMany(() => RatingFeedback, (ratingFeedback) => ratingFeedback.account)
+  ratingFeedback: RatingFeedback[];
 }

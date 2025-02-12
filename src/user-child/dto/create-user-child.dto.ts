@@ -33,3 +33,32 @@ export class CreateUserChildDto {
   @IsOptional()
   memberId: string;
 }
+
+export class CreateByUserChildDto {
+  @IsOptional()
+  accountId: string;
+
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  name: string;
+
+  @IsNotEmpty()
+  @MinLength(2)
+  @MaxLength(100)
+  email: string;
+
+  @IsNotEmpty()
+  @MinLength(10)
+  @MaxLength(10)
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  relation: string;
+
+  @IsNotEmpty()
+  martialStatus: string;
+
+  @IsOptional()
+  memberId: string;
+}

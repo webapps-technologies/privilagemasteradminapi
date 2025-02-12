@@ -120,7 +120,7 @@ export class AccountController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.BUSINESS)
   async findChildList(@Query() dto: PaginationChildDto) {
-    return this.accountService.findChildList(dto)
+    return this.accountService.findChildList(dto);
   }
 
   @Get('business/profile')
@@ -128,6 +128,20 @@ export class AccountController {
   @Roles(UserRole.BUSINESS)
   async businessProfile(@CurrentUser() user: Account) {
     return this.accountService.businessProfile(user.id);
+  }
+
+  @Get('business/qrcode')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async generateBusinessQR(@CurrentUser() user: Account) {
+    return this.accountService.generateBusinessQR(user.id);
+  }
+
+  @Get('verifyUser/qr')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
+  async verifyUserByQR(@CurrentUser() user: Account) {
+    return this.accountService.verifyUserByQR(user.id)
   }
 
   @Get('admin/profile')
