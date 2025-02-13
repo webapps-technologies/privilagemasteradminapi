@@ -1,9 +1,5 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserChildDto {
   @IsNotEmpty()
@@ -29,6 +25,10 @@ export class CreateUserChildDto {
 
   @IsNotEmpty()
   martialStatus: string;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  age: number;
 
   @IsOptional()
   memberId: string;
@@ -58,6 +58,10 @@ export class CreateByUserChildDto {
 
   @IsNotEmpty()
   martialStatus: string;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  age: number;
 
   @IsOptional()
   memberId: string;

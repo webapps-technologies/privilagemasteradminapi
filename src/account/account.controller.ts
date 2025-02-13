@@ -137,11 +137,14 @@ export class AccountController {
     return this.accountService.generateBusinessQR(user.id);
   }
 
-  @Get('verifyUser/qr')
+  @Get('verifyUser/qr/:businessAccId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.USER)
-  async verifyUserByQR(@CurrentUser() user: Account) {
-    return this.accountService.verifyUserByQR(user.id)
+  async verifyUserByQR(
+    @Param('businessAccId') businessAccId: string,
+    @CurrentUser() user: Account,
+  ) {
+    return this.accountService.verifyUserByQR(businessAccId, user.id);
   }
 
   @Get('admin/profile')

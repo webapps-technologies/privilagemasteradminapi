@@ -1,4 +1,5 @@
-import { IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateUserChildDto {
   @IsOptional()
@@ -15,4 +16,8 @@ export class UpdateUserChildDto {
 
   @IsOptional()
   martialStatus: string;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  age: number;
 }

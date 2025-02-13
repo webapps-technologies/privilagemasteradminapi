@@ -10,15 +10,22 @@ import { MembershipCard } from './entities/membership-card.entity';
 import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
 import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
 import { DefaultStatus } from 'src/enum';
+import { Business } from 'src/business/entities/business.entity';
 
 @Injectable()
 export class MembershipCardService {
   constructor(
     @InjectRepository(MembershipCard)
     private readonly repo: Repository<MembershipCard>,
+    @InjectRepository(Business)
+    private readonly businessRepo: Repository<Business>,
   ) {}
 
-  async create(dto: CreateMembershipCardDto) {
+  async create(dto: CreateMembershipCardDto, accountId: string) {
+    const business = await this.businessRepo.findOne({
+      where: { accountId: accountId },
+    });
+    dto.businessName = business.businessName;
     const obj = Object.assign(dto);
     return this.repo.save(obj);
   }
@@ -32,6 +39,7 @@ export class MembershipCardService {
       .leftJoinAndSelect('membershipCard.cardAmenities', 'cardAmenities')
       .select([
         'membershipCard.id',
+        'membershipCard.businessName',
         'membershipCard.name',
         'membershipCard.validity',
         'membershipCard.price',

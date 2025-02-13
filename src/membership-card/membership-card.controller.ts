@@ -42,7 +42,7 @@ export class MembershipCardController {
   @Roles(UserRole.BUSINESS)
   create(@Body() dto: CreateMembershipCardDto, @CurrentUser() user: Account) {
     dto.accountId = user.id;
-    return this.membershipCardService.create(dto);
+    return this.membershipCardService.create(dto, user.id);
   }
 
   @Get('list')

@@ -180,6 +180,7 @@ export class AccountService {
         'userDetail.status',
 
         'membershipCard.id',
+        'membershipCard.businessName',
         'membershipCard.name',
         'membershipCard.validity',
         'membershipCard.price',
@@ -207,15 +208,15 @@ export class AccountService {
         memberId: dto.memberId,
       });
     }
-    // if (dto.startDate && dto.endDate) {
-    //   query.andWhere(
-    //     'userDetail.membershipValidFrom >= :startDate AND userDetail.membershipValidTo <= :endDate',
-    //     {
-    //       startDate: startDate,
-    //       endDate: endDate,
-    //     },
-    //   );
-    // }
+    if (dto.startDate && dto.endDate) {
+      query.andWhere(
+        'userDetail.membershipValidTo >= :startDate AND userDetail.membershipValidTo <= :endDate',
+        {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      );
+    }
     if (dto.keyword && dto.keyword.length > 0) {
       query.andWhere(
         new Brackets((qb) => {
@@ -306,6 +307,7 @@ export class AccountService {
         'userChild.phoneNumber',
         'userChild.relation',
         'userChild.martialStatus',
+        'userChild.age',
         'userChild.profile',
         'userChild.createAt',
         'userChild.updatedAt',
@@ -605,23 +607,7 @@ export class AccountService {
     const result = await this.repo
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.business', 'business')
-      .leftJoinAndSelect(
-        'account.membershipCard',
-        'membershipCard',
-        'membershipCard.status = :status',
-        {
-          status: DefaultStatus.ACTIVE,
-        },
-      )
-      .select([
-        'account.id',
-
-        'business.businessName',
-
-        'membershipCard.id',
-        'membershipCard.name',
-        'membershipCard.status',
-      ])
+      .select(['account.id', 'business.businessName'])
       .where('account.id = :id', { id: accountId })
       .getOne();
     // return result;
@@ -629,7 +615,7 @@ export class AccountService {
     return { qrCode: qrCode };
   }
 
-  async verifyUserByQR(accountId: string) {
+  async verifyUserByQR(businessAccId: string, accountId: string) {
     const result = await this.repo
       .createQueryBuilder('account')
       .leftJoinAndSelect('account.userDetail', 'userDetail')
@@ -651,10 +637,44 @@ export class AccountService {
       .where('account.id = :id', { id: accountId })
       .getOne();
 
+    const business = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .leftJoinAndSelect(
+        'account.membershipCard',
+        'membershipCard',
+        'membershipCard.status = :status',
+        {
+          status: DefaultStatus.ACTIVE,
+        },
+      )
+      .select([
+        'account.id',
+
+        'business.businessName',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.status',
+      ])
+      .where('account.id = :id', { id: businessAccId })
+      .getOne();
+
+    // return business
+
     if (result.userDetail[0].status == DefaultStatus.ACTIVE) {
       const userCardId = result.userDetail[0].membershipCard['id'];
-      //find the membershipCardId in hotel's membershipCard array if found return true;
-
+      //find the membershipCardId in business's membershipCard array if found return true;
+      business.membershipCard.map((elm) => {
+        console.log(elm.id);
+        if (elm.status == DefaultStatus.ACTIVE) {
+          if (userCardId == elm.id) {
+            return { message: 'User Authenticated.' };
+          } else {
+            throw new NotFoundException('User Not found');
+          }
+        }
+      });
     } else {
       throw new UnauthorizedException(
         `Your account is ${result.userDetail[0].status}! Please renew!`,

@@ -43,6 +43,9 @@ export class MembershipCard {
   @Column({ type: 'int', default: 0 })
   memberCount: number;
 
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  businessName: string;
+
   @Column({ type: 'enum', enum: DefaultStatus, default: DefaultStatus.PENDING })
   status: DefaultStatus;
 

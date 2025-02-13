@@ -1,5 +1,6 @@
 import { AdminDetail } from 'src/admin-detail/entities/admin-detail.entity';
 import { BusinessContract } from 'src/business-contract/entities/business-contract.entity';
+import { BusinessPage } from 'src/business-page/entities/business-page.entity';
 import { Business } from 'src/business/entities/business.entity';
 import { AIType, DefaultStatus, LoginType, UserRole } from 'src/enum';
 import { LoginHistory } from 'src/login-history/entities/login-history.entity';
@@ -112,4 +113,7 @@ export class Account {
 
   @OneToMany(() => RatingFeedback, (ratingFeedback) => ratingFeedback.account)
   ratingFeedback: RatingFeedback[];
+
+  @OneToMany(() => BusinessPage, (businessPage) => businessPage.account)
+  businessPage: BusinessPage[];
 }

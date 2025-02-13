@@ -33,6 +33,9 @@ export class CreateMembershipCardDto {
   memberCount: number;
 
   @IsOptional()
+  businessName: string;
+
+  @IsOptional()
   accountId: string;
 }
 

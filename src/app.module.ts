@@ -45,6 +45,7 @@ import { OtherMembershipModule } from './other-membership/other-membership.modul
 import { NewsModule } from './news/news.module';
 import { UserChildModule } from './user-child/user-child.module';
 import { RatingFeedbackModule } from './rating-feedback/rating-feedback.module';
+import { BusinessPageModule } from './business-page/business-page.module';
 
 @Module({
   imports: [
@@ -103,7 +104,8 @@ import { RatingFeedbackModule } from './rating-feedback/rating-feedback.module';
     OtherMembershipModule,
     NewsModule,
     UserChildModule,
-    RatingFeedbackModule
+    RatingFeedbackModule,
+    BusinessPageModule
   ],
   controllers: [AppController],
   providers: [AppService],

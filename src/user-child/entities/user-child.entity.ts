@@ -35,6 +35,9 @@ export class UserChild {
   @Column({ type: 'varchar', length: 100, nullable: true })
   martialStatus: string;
 
+  @Column({ type: 'int', default: 0})
+  age: number;
+
   @Column({ type: 'text', nullable: true })
   profile: string;
 
