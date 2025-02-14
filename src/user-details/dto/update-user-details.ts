@@ -9,10 +9,14 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { YNStatus } from 'src/enum';
 
 export class UpdateUserDetailDto {
   @IsOptional()
   membershipCardId: string;
+
+  @IsOptional()
+  salutation: string;
 
   @IsOptional()
   @IsString()
@@ -85,6 +89,11 @@ export class UpdateUserDetailDto {
   @IsOptional()
   @MinLength(0)
   @MaxLength(100)
+  aadharNumber: string;
+
+  @IsOptional()
+  @MinLength(0)
+  @MaxLength(100)
   income: string;
 
   @IsOptional()
@@ -101,6 +110,9 @@ export class UpdateUserDetailDto {
   @MinLength(0)
   @MaxLength(100)
   zipcode: string;
+
+  @IsNotEmpty()
+  haveBusiness: YNStatus;
 
   @IsOptional()
   @MinLength(0)
@@ -142,6 +154,12 @@ export class UpdateUserDetailDto {
 
   @IsOptional()
   businessEmail: string;
+
+  @IsOptional()
+  businessAddress1: string;
+
+  @IsOptional()
+  businessAddress2: string;
 
   @IsOptional()
   accountId: string;

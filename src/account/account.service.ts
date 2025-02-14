@@ -93,6 +93,7 @@ export class AccountService {
     endDate.setDate(today.getDate() + duration - 1);
     const endDateString = endDate.toLocaleDateString('en-CA');
     const memberId = `MEM-${Math.floor(1000 + Math.random() * 9000)}`;
+    const cardNumber = `CRD-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const accObj = Object.create({
       phoneNumber: dto.phoneNumber,
@@ -101,6 +102,7 @@ export class AccountService {
     const account = await this.repo.save(accObj);
     const udObj = Object.create({
       accountId: account.id,
+      salutation: dto.salutation,
       email: dto.email,
       fName: dto.fName,
       mName: dto.mName,
@@ -108,17 +110,25 @@ export class AccountService {
       gender: dto.gender,
       address1: dto.address1,
       address2: dto.address2,
+      landMark: dto.landMark,
       city: dto.city,
       state: dto.state,
       zipcode: dto.zipcode,
+      aadharNumber: dto.aadharNumber,
+      panNumber: dto.panNumber,
+      haveBusiness: dto.haveBusiness,
       businessType: dto.businessType,
       businessName: dto.businessName,
+      businessEmail: dto.businessEmail,
       gstNumber: dto.gstNumber,
       businessCity: dto.businessCity,
       businessState: dto.businessState,
       businessZipcode: dto.businessZipcode,
       businessPhone: dto.businessPhone,
+      businessLandmark: dto.businessLandmark,
+
       membershipCardId: dto.membershipCardId,
+      cardNumber: cardNumber,
       membershipValidFrom: startDate,
       membershipValidTo: endDateString,
       memberId: memberId,
@@ -177,6 +187,13 @@ export class AccountService {
         'userDetail.profession',
         'userDetail.panNumber',
         'userDetail.income',
+        'userDetail.salutation',
+        'userDetail.haveBusiness',
+        'userDetail.businessAddress1',
+        'userDetail.businessAddress2',
+        'userDetail.pan',
+        'userDetail.aadhar',
+        'userDetail.aadharNumber',
         'userDetail.status',
 
         'membershipCard.id',
@@ -284,6 +301,13 @@ export class AccountService {
         'userDetail.profession',
         'userDetail.panNumber',
         'userDetail.income',
+        'userDetail.salutation',
+        'userDetail.haveBusiness',
+        'userDetail.businessAddress1',
+        'userDetail.businessAddress2',
+        'userDetail.pan',
+        'userDetail.aadhar',
+        'userDetail.aadharNumber',
         'userDetail.status',
 
         'membershipCard.id',
@@ -363,6 +387,13 @@ export class AccountService {
         'userDetail.profession',
         'userDetail.panNumber',
         'userDetail.income',
+        'userDetail.salutation',
+        'userDetail.haveBusiness',
+        'userDetail.businessAddress1',
+        'userDetail.businessAddress2',
+        'userDetail.pan',
+        'userDetail.aadhar',
+        'userDetail.aadharNumber',
         'userDetail.status',
 
         'membershipCard.id',
@@ -453,6 +484,13 @@ export class AccountService {
         'userDetail.profession',
         'userDetail.panNumber',
         'userDetail.income',
+        'userDetail.salutation',
+        'userDetail.haveBusiness',
+        'userDetail.businessAddress1',
+        'userDetail.businessAddress2',
+        'userDetail.pan',
+        'userDetail.aadhar',
+        'userDetail.aadharNumber',
         'userDetail.status',
 
         'membershipCard.id',
@@ -636,6 +674,9 @@ export class AccountService {
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();
+    if (!result || !result.userDetail) {
+      throw new NotFoundException('User not found');
+    }
 
     const business = await this.repo
       .createQueryBuilder('account')
@@ -659,26 +700,98 @@ export class AccountService {
       ])
       .where('account.id = :id', { id: businessAccId })
       .getOne();
+    if (!business) {
+      throw new NotFoundException('Business account not found');
+    }
 
-    // return business
-
-    if (result.userDetail[0].status == DefaultStatus.ACTIVE) {
-      const userCardId = result.userDetail[0].membershipCard['id'];
-      //find the membershipCardId in business's membershipCard array if found return true;
-      business.membershipCard.map((elm) => {
-        console.log(elm.id);
-        if (elm.status == DefaultStatus.ACTIVE) {
-          if (userCardId == elm.id) {
-            return { message: 'User Authenticated.' };
-          } else {
-            throw new NotFoundException('User Not found');
-          }
-        }
-      });
-    } else {
+    if (result.userDetail[0].status !== DefaultStatus.ACTIVE) {
       throw new UnauthorizedException(
-        `Your account is ${result.userDetail[0].status}! Please renew!`,
+        `Your account is not active! Please renew or contact to admin!`,
       );
+    }
+
+    const userCardId = result.userDetail[0].membershipCard['id'];
+    if (!userCardId) {
+      throw new NotFoundException('User does not have a valid membership card');
+    }
+
+    const isCardValid = business.membershipCard?.some(
+      (card) => card.id === userCardId,
+    );
+    if (isCardValid) {
+      return { message: 'User Authenticated.' };
+    } else {
+      throw new NotFoundException('User Not found or invalid membership');
+    }
+  }
+
+  async verifyUserByQRByBusiness(accountId: string, userAccId: string) {
+    const business = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.business', 'business')
+      .leftJoinAndSelect(
+        'account.membershipCard',
+        'membershipCard',
+        'membershipCard.status = :status',
+        {
+          status: DefaultStatus.ACTIVE,
+        },
+      )
+      .select([
+        'account.id',
+
+        'business.businessName',
+
+        'membershipCard.id',
+        'membershipCard.name',
+        'membershipCard.status',
+      ])
+      .where('account.id = :id', { id: accountId })
+      .getOne();
+    if (!business) {
+      throw new NotFoundException('Business account not found');
+    }
+
+    const result = await this.repo
+      .createQueryBuilder('account')
+      .leftJoinAndSelect('account.userDetail', 'userDetail')
+      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      .select([
+        'account.id',
+        'account.phoneNumber',
+        'account.roles',
+
+        'userDetail.id',
+        'userDetail.memberId',
+        'userDetail.membershipValidFrom',
+        'userDetail.membershipValidTo',
+        'userDetail.status',
+
+        'membershipCard.id',
+        'membershipCard.name',
+      ])
+      .where('account.id = :id', { id: userAccId })
+      .getOne();
+    if (!result || !result.userDetail) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (result.userDetail[0].status !== DefaultStatus.ACTIVE) {
+      throw new UnauthorizedException(`Account is not active!`);
+    }
+
+    const userCardId = result.userDetail[0].membershipCard['id'];
+    if (!userCardId) {
+      throw new NotFoundException('User does not have a valid membership card');
+    }
+
+    const isCardValid = business.membershipCard?.some(
+      (card) => card.id === userCardId,
+    );
+    if (isCardValid) {
+      return { id: result.id, message: 'User Authenticated.' };
+    } else {
+      throw new NotFoundException('User Not found or invalid membership');
     }
   }
 
@@ -818,6 +931,13 @@ export class AccountService {
         'userDetail.profession',
         'userDetail.panNumber',
         'userDetail.income',
+        'userDetail.salutation',
+        'userDetail.haveBusiness',
+        'userDetail.businessAddress1',
+        'userDetail.businessAddress2',
+        'userDetail.pan',
+        'userDetail.aadhar',
+        'userDetail.aadharNumber',
         'userDetail.status',
 
         'membershipCard.id',
@@ -836,67 +956,67 @@ export class AccountService {
   async userDetailQRCode(accountId: string) {
     const userProfile = await this.repo
       .createQueryBuilder('account')
-      .leftJoinAndSelect('account.userDetail', 'userDetail')
-      .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
-      .leftJoinAndSelect('account.userChild', 'userChild')
+      // .leftJoinAndSelect('account.userDetail', 'userDetail')
+      // .leftJoinAndSelect('userDetail.membershipCard', 'membershipCard')
+      // .leftJoinAndSelect('account.userChild', 'userChild')
       .select([
         'account.id',
         'account.phoneNumber',
         'account.roles',
         'account.createdAt',
 
-        'userDetail.id',
-        'userDetail.memberId',
-        'userDetail.membershipValidFrom',
-        'userDetail.membershipValidTo',
-        'userDetail.fName',
-        'userDetail.mName',
-        'userDetail.lName',
-        'userDetail.email',
-        'userDetail.gender',
-        'userDetail.profile',
-        'userDetail.address1',
-        'userDetail.address2',
-        'userDetail.city',
-        'userDetail.state',
-        'userDetail.zipcode',
-        'userDetail.businessType',
-        'userDetail.businessName',
-        'userDetail.memberDoc',
-        'userDetail.gstNumber',
-        'userDetail.businessDoc',
-        'userDetail.businessCity',
-        'userDetail.businessState',
-        'userDetail.businessZipcode',
-        'userDetail.businessPhone',
-        'userDetail.cardNumber',
-        'userDetail.landMark',
-        'userDetail.fatherName',
-        'userDetail.dob',
-        'userDetail.qualification',
-        'userDetail.profession',
-        'userDetail.panNumber',
-        'userDetail.income',
-        'userDetail.status',
+        // 'userDetail.id',
+        // 'userDetail.memberId',
+        // 'userDetail.membershipValidFrom',
+        // 'userDetail.membershipValidTo',
+        // 'userDetail.fName',
+        // 'userDetail.mName',
+        // 'userDetail.lName',
+        // 'userDetail.email',
+        // 'userDetail.gender',
+        // 'userDetail.profile',
+        // 'userDetail.address1',
+        // 'userDetail.address2',
+        // 'userDetail.city',
+        // 'userDetail.state',
+        // 'userDetail.zipcode',
+        // 'userDetail.businessType',
+        // 'userDetail.businessName',
+        // 'userDetail.memberDoc',
+        // 'userDetail.gstNumber',
+        // 'userDetail.businessDoc',
+        // 'userDetail.businessCity',
+        // 'userDetail.businessState',
+        // 'userDetail.businessZipcode',
+        // 'userDetail.businessPhone',
+        // 'userDetail.cardNumber',
+        // 'userDetail.landMark',
+        // 'userDetail.fatherName',
+        // 'userDetail.dob',
+        // 'userDetail.qualification',
+        // 'userDetail.profession',
+        // 'userDetail.panNumber',
+        // 'userDetail.income',
+        // 'userDetail.status',
 
-        'membershipCard.id',
-        'membershipCard.name',
-        'membershipCard.validity',
-        'membershipCard.price',
-        'membershipCard.currencyType',
-        'membershipCard.memberCount',
-        'membershipCard.cardDesign',
+        // 'membershipCard.id',
+        // 'membershipCard.name',
+        // 'membershipCard.validity',
+        // 'membershipCard.price',
+        // 'membershipCard.currencyType',
+        // 'membershipCard.memberCount',
+        // 'membershipCard.cardDesign',
 
-        'userChild.id',
-        'userChild.memberId',
-        'userChild.name',
-        'userChild.email',
-        'userChild.phoneNumber',
-        'userChild.relation',
-        'userChild.martialStatus',
-        'userChild.profile',
-        'userChild.createAt',
-        'userChild.updatedAt',
+        // 'userChild.id',
+        // 'userChild.memberId',
+        // 'userChild.name',
+        // 'userChild.email',
+        // 'userChild.phoneNumber',
+        // 'userChild.relation',
+        // 'userChild.martialStatus',
+        // 'userChild.profile',
+        // 'userChild.createAt',
+        // 'userChild.updatedAt',
       ])
       .where('account.id = :id', { id: accountId })
       .getOne();

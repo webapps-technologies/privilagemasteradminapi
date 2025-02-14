@@ -12,7 +12,7 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { DefaultStatus, UserRole } from 'src/enum';
+import { DefaultStatus, UserRole, YNStatus } from 'src/enum';
 
 export class CreateAccountDto {
   @IsNotEmpty()
@@ -109,6 +109,9 @@ export class AddMemberDto {
   phoneNumber: string;
 
   @IsNotEmpty()
+  salutation: string;
+
+  @IsNotEmpty()
   email: string;
 
   @IsNotEmpty()
@@ -136,28 +139,55 @@ export class AddMemberDto {
   state: string;
 
   @IsNotEmpty()
+  landMark: string;
+
+  @IsNotEmpty()
   zipcode: string;
 
+  @IsOptional()
+  qualification: string;
+
   @IsNotEmpty()
+  aadharNumber: string;
+
+  @IsNotEmpty()
+  panNumber: string;
+
+  @IsNotEmpty()
+  haveBusiness: YNStatus;
+
+  @IsOptional()
   businessType: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   businessName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  businessEmail: string;
+
+  @IsOptional()
   gstNumber: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   businessCity: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   businessState: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   businessZipcode: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   businessPhone: string;
+
+  @IsOptional()
+  businessLandmark: string;
+
+  @IsOptional()
+  businessAddress1: string;
+
+  @IsOptional()
+  businessAddress2: string;
 
   @IsNotEmpty()
   membershipCardId: string;

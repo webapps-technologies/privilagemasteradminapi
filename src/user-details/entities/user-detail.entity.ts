@@ -1,5 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
-import { DefaultStatus, Gender } from 'src/enum';
+import { DefaultStatus, Gender, YNStatus } from 'src/enum';
 import { MembershipCard } from 'src/membership-card/entities/membership-card.entity';
 import {
   Column,
@@ -14,6 +14,9 @@ import {
 export class UserDetail {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  salutation: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   email: string;
@@ -52,7 +55,13 @@ export class UserDetail {
   profession: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  panNumber: string;
+  panNumber: string;  
+
+  @Column({ type: 'text', nullable: true })
+  pan: string;
+
+  @Column({ type: 'text', nullable: true })
+  panPath: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   income: string;
@@ -77,6 +86,9 @@ export class UserDetail {
 
   @Column({ type: 'text', nullable: true })
   memberDocPath: string;
+
+  @Column({ type: 'enum', enum: YNStatus, default: YNStatus.NO })
+  haveBusiness: YNStatus;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   businessType: string;
@@ -111,11 +123,26 @@ export class UserDetail {
   @Column({ type: 'varchar', length: 100, nullable: true })
   businessLandmark: string;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  businessAddress1: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  businessAddress2: string;
+
   @Column({ type: 'date', nullable: true })
   membershipValidFrom: Date;
 
   @Column({ type: 'date', nullable: true })
   membershipValidTo: Date;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  aadharNumber: string;
+
+  @Column({ type: 'text', nullable: true })
+  aadhar: string;
+
+  @Column({ type: 'text', nullable: true })
+  aadharPath: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   memberId: string;

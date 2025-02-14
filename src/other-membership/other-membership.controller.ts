@@ -32,9 +32,20 @@ export class OtherMembershipController {
     return this.otherMembershipService.create(dto);
   }
 
+  @Post('business/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  createByBusiness(
+    @Body() dto: CreateOtherMembershipDto,
+    @Param('accountId') accountId: string,
+  ) {
+    dto.accountId = accountId;
+    return this.otherMembershipService.create(dto);
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.USER)
+  @Roles(UserRole.USER, UserRole.BUSINESS)
   remove(@Param('id') id: string) {
     return this.otherMembershipService.remove(id);
   }

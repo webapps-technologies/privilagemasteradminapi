@@ -21,7 +21,7 @@ export class CreateContactUsDto {
     @MaxLength(100)
     email: string;
     
-    @IsNotEmpty()
+    @IsOptional()
     query: string;
 
     @IsNotEmpty()

@@ -213,6 +213,138 @@ export class UserDetailsController {
     return this.userDetailsService.businessDoc(file.path, fileData);
   }
 
+  @Put('pan')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async panByUser(
+    @CurrentUser() user: Account,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          // new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          // new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(user.id);
+    return this.userDetailsService.pan(file.path, fileData);
+  }
+
+  @Put('aadhar')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.USER)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async aadharByUser(
+    @CurrentUser() user: Account,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          // new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          // new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(user.id);
+    return this.userDetailsService.aadhar(file.path, fileData);
+  }
+
+  @Put('pan-byBusiness/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async pan(
+    @Param('accountId') accountId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(accountId);
+    return this.userDetailsService.pan(file.path, fileData);
+  }
+
+  @Put('aadhar-byBusiness/:accountId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/UserDetail/document',
+        filename: (req, file, callback) => {
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          return callback(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  async aadhar(
+    @Param('accountId') accountId: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|pdf)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const fileData = await this.userDetailsService.findOne(accountId);
+    return this.userDetailsService.aadhar(file.path, fileData);
+  }
+
   @Put('member/status/:accountId')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.BUSINESS)

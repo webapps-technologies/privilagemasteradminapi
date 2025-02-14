@@ -147,6 +147,16 @@ export class AccountController {
     return this.accountService.verifyUserByQR(businessAccId, user.id);
   }
 
+  @Get('qr-verify/business/:userAccId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.BUSINESS)
+  async verifyUserByQRByBusiness(
+    @Param('userAccId') userAccId: string,
+    @CurrentUser() user: Account,
+  ) {
+    return this.accountService.verifyUserByQRByBusiness(user.id, userAccId);
+  }
+
   @Get('admin/profile')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)

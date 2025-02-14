@@ -69,9 +69,6 @@ export class AuthController {
     return this.authService.businessResetPass(dto);
   }
 
-  @Post('register/business')
-  registerBusiness() {}
-
   @Post('member/login')
   memberLogin(@Body() dto: SigninDto) {
     return this.authService.memberLogin(dto);

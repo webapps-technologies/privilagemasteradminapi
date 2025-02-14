@@ -1,9 +1,17 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBusinessPageDto } from './dto/create-business-page.dto';
 import { UpdateBusinessPageDto } from './dto/update-business-page.dto';
 import { BusinessPage } from './entities/business-page.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
+import { CommonPaginationDto } from 'src/common/dto/common-pagination.dto';
+import { DefaultStatusPaginationDto } from 'src/common/dto/default-status-pagination.dto';
+import { DefaultStatusDto } from 'src/common/dto/default-status.dto';
+import { DefaultStatus } from 'src/enum';
 
 @Injectable()
 export class BusinessPageService {
@@ -23,19 +31,45 @@ export class BusinessPageService {
     return this.repo.save(obj);
   }
 
-  findAll() {
-    return `This action returns all businessPage`;
+  async findAll(dto: DefaultStatusPaginationDto, accountId: string) {
+    const keyword = dto.keyword || '';
+    const [result, total] = await this.repo.findAndCount({
+      where: { status: dto.status, accountId, name: Like('%' + keyword + '%') },
+      take: dto.limit,
+      skip: dto.offset,
+    });
+    return { result, total };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} businessPage`;
+  async getActivePages(dto: CommonPaginationDto, accountId: string ){
+    const keyword = dto.keyword || '';
+    const [result, total] = await this.repo.findAndCount({
+      where: { status: DefaultStatus.ACTIVE, accountId, name: Like('%' + keyword + '%') },
+      take: dto.limit,
+      skip: dto.offset,
+    });
+    return { result, total };
   }
 
-  update(id: number, updateBusinessPageDto: UpdateBusinessPageDto) {
-    return `This action updates a #${id} businessPage`;
+  async findOne(id: string) {
+    return this.repo.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} businessPage`;
+  async update(id: string, dto: UpdateBusinessPageDto) {
+    const result = await this.repo.findOne({ where: { id } });
+    if (!result) {
+      throw new NotFoundException('Page not found!');
+    }
+    const obj = Object.assign(result, dto);
+    return this.repo.save(obj);
+  }
+
+  async status(id: string, dto: DefaultStatusDto) {
+    const result = await this.repo.findOne({ where: { id } });
+    if (!result) {
+      throw new NotFoundException('Page not found!');
+    }
+    const obj = Object.assign(result, { status: dto.status });
+    return this.repo.save(obj);
   }
 }

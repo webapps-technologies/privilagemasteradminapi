@@ -49,6 +49,7 @@ export class UserDetailsService {
 
     const obj = Object.assign(result, {
       membershipCardId: dto.membershipCardId,
+      salutation: dto.salutation,
       email: dto.email,
       fName: dto.fName,
       mName: dto.mName,
@@ -59,6 +60,8 @@ export class UserDetailsService {
       city: dto.city,
       state: dto.state,
       zipcode: dto.zipcode,
+      aadharNumber: dto.aadharNumber,
+      haveBusiness: dto.haveBusiness,      
       businessType: dto.businessType,
       businessName: dto.businessName,
       gstNumber: dto.gstNumber,
@@ -75,6 +78,8 @@ export class UserDetailsService {
       profession: dto.profession,
       panNumber: dto.panNumber,
       income: dto.income,
+      businessAddress1: dto.businessAddress1,
+      businessAddress2: dto.businessAddress2,
       
       cardNumber: cardNumber,
       membershipValidFrom: startDate,
@@ -113,6 +118,22 @@ export class UserDetailsService {
     const obj = Object.assign(result, {
       businessDoc: process.env.PV_CDN_LINK + image,
       businessDocPath: image,
+    });
+    return this.repo.save(obj);
+  }
+
+  async pan(image: string, result: UserDetail) {
+    const obj = Object.assign(result, {
+      pan: process.env.PV_CDN_LINK + image,
+      panPath: image,
+    });
+    return this.repo.save(obj);
+  }
+
+  async aadhar(image: string, result: UserDetail) {
+    const obj = Object.assign(result, {
+      aadhar: process.env.PV_CDN_LINK + image,
+      aadharPath: image,
     });
     return this.repo.save(obj);
   }
